@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+
+    <!-- Un fragent por opción de navegación -->
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.mislugares.UI.inicio.InicioFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+
+    <fragment
+        android:id="@+id/nav_lugares"
+        android:name="com.example.mislugares.UI.lugares.LugaresFragment"
+        android:label="@string/menu_lugares"
+        tools:layout="@layout/fragment_lugares" />
+
+    <fragment
+        android:id="@+id/nav_noticias"
+        android:name="com.example.mislugares.UI.noticias.NoticiasFragment"
+        android:label="@string/menu_noticias"
+        tools:layout="@layout/fragment_noticias" />
+
+    <fragment
+        android:id="@+id/nav_acerca_de"
+        android:name="com.example.mislugares.UI.acerca_de.AcercaDeFragment"
+        android:label="@string/menu_acerca_de"
+        tools:layout="@layout/fragment_acerca_de" />
+
+
+
+</navigation>

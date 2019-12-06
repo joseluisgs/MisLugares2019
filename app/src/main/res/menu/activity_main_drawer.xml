@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <!-- Debe coididir el id con el mobil nevigation -->
+
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_menu_home"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_lugares"
+            android:icon="@drawable/ic_menu_mapa"
+            android:title="@string/menu_lugares" />
+
+        <item
+            android:id="@+id/nav_noticias"
+            android:icon="@drawable/ic_menu_rss"
+            android:title="@string/menu_noticias" />
+
+    </group>
+
+    <item android:title="Contacto">
+        <menu>
+                <item
+                    android:id="@+id/nav_acerca_de"
+                    android:icon="@drawable/ic_menu_acerca_de"
+                    android:title="@string/menu_acerca_de" />
+
+        </menu>
+    </item>
+
+</menu>

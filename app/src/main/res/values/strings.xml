@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Mis Lugares</string>
+    <string name="navigation_drawer_open">Abrir menú</string>
+    <string name="navigation_drawer_close">Cerrar menú</string>
+    <string name="nav_header_title">Ejemplo 2º DAM 2019-2020</string>
+    <string name="nav_header_subtitle">twitter @joseluisgonsan</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Otros</string>
+
+    <string name="curso">Ejemplo 2º DAM 2019-2020</string>
+    <string name="autor">José Luis González</string>
+    <string name="instituto">CIFP Virgen de Gracia</string>
+    <string name="lugar">Puertollano</string>
+
+    <string name="menu_home">Inicio</string>
+    <string name="menu_lugares">Lugares</string>
+    <string name="menu_noticias">Noticias</string>
+    <!-- <string name="menu_slideshow">Slideshow</string> -->
+    <!--<string name="menu_tools">Tools</string> -->
+    <string name="menu_share">Compartir</string>
+    <string name="menu_acerca_de">Acerca De</string>
+
+    <!-- Tipos de lugares para insertar -->
+    <string-array name="tipos_lugares">
+        <item>Ciudad</item>
+        <item>Pueblo</item>
+        <item>Monumento</item>
+        <item>Paisaje</item>
+        <item>Bar</item>
+        <item>Comida</item>
+    </string-array>
+</resources>
