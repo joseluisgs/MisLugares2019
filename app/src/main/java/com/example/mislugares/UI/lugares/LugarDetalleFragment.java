@@ -1,5 +1,6 @@
 package com.example.mislugares.UI.lugares;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -39,6 +40,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
+
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -91,6 +93,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     private Marker marcador = null;
     // Posicion
     private FusedLocationProviderClient mPosicion;
+    private Location localizacion;
 
 
 
@@ -103,6 +106,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         this.modo = INSERTAR;
     }
 
+    @SuppressLint("ValidFragment")
     public LugarDetalleFragment(int modo) {
         this.modo = modo;
     }
@@ -468,6 +472,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     }
 
     private void iniciarMapa(){
+        // Inicio la localizacion
+        mPosicion = LocationServices.getFusedLocationProviderClient(getActivity());
+
         // Para Obtener el mapa dentro de un Fragment
         FragmentManager fm = getActivity().getSupportFragmentManager();/// getChildFragmentManager();
         supportMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.mMap);
@@ -519,12 +526,43 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
         // Activo el evento del marcador
         activarEventosMarcdores();
+        
+        obtenerPosicion();
 
         // La llevamos a un lugar la camara
-        LatLng ll = new LatLng(38.9860385, -3.9620074);
+        // LatLng ll = new LatLng(38.9860385, -3.9620074);
         // Movemos la camara
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(ll));
+       // mMap.moveCamera(CameraUpdateFactory.newLatLng(ll));
     }
+
+    private void obtenerPosicion() {
+        try {
+            if (true) {
+                // Lo lanzamos como tarea concurrente
+                Task<Location> local = mPosicion.getLastLocation();
+                local.addOnCompleteListener(getActivity(), new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        if (task.isSuccessful()) {
+                            // Actualizamos la última posición conocida
+                            localizacion = task.getResult();
+                            posicion = new LatLng(localizacion.getLatitude(),
+                                    localizacion.getLongitude());
+                            // Añadimos un marcador especial para poder operar con esto
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion));
+
+                        } else {
+                            Log.d("GPS", "No se encuetra la última posición.");
+                            Log.e("GPS", "Exception: %s", task.getException());
+                        }
+                    }
+                });
+            }
+        } catch (SecurityException e)  {
+            Log.e("Exception: %s", e.getMessage());
+        }
+    }
+
 
 
     private void activarEventosMarcdores() {
