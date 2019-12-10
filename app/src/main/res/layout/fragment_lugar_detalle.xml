@@ -23,7 +23,7 @@
             android:layout_gravity="right"
             android:layout_marginTop="115dp"
             android:layout_marginRight="5dp"
-            android:backgroundTint="#EED07CE9"
+            android:backgroundTint="#FFDC71EE"
             android:clickable="true"
             android:src="@android:drawable/ic_menu_camera"
             app:backgroundTint="#5790BD"
@@ -137,7 +137,7 @@
                 android:layout_marginBottom="10dp"
                 android:clickable="true"
                 android:src="@drawable/ic_lugar"
-                app:backgroundTint="#9171CF" />
+                app:backgroundTint="#52B0EC" />
 
 
     </RelativeLayout>

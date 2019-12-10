@@ -537,7 +537,6 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     private void obtenerPosicion() {
         try {
-            if (true) {
                 // Lo lanzamos como tarea concurrente
                 Task<Location> local = mPosicion.getLastLocation();
                 local.addOnCompleteListener(getActivity(), new OnCompleteListener<Location>() {
@@ -557,7 +556,6 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                         }
                     }
                 });
-            }
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
         }

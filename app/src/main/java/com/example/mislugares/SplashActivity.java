@@ -1,5 +1,6 @@
 package com.example.mislugares;
 
+import android.widget.Toolbar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -12,7 +13,10 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Ocultamos la barra de herramientas
+        getSupportActionBar().hide(); //<< this
         setContentView(R.layout.activity_splash);
+
 
         //crea un intent para ir al activity main
         intent = new Intent(this,MainActivity.class);
