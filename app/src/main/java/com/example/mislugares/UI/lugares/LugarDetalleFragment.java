@@ -8,49 +8,44 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.Toast;
-
+import android.widget.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import com.example.mislugares.MainActivity;
 import com.example.mislugares.Modelos.Lugar;
 import com.example.mislugares.R;
 import com.example.mislugares.Utilidades.Utilidades;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.concurrent.Executor;
 
-public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback {
+public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener {
 
     // Permisos
     private static final int LOCATION_REQUEST_CODE = 1; // Para los permisos
@@ -91,6 +86,13 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     private Context mContext;
     private SupportMapFragment supportMapFragment;
     private GoogleMap mMap;
+    private LatLng posicion;
+    // Marcador
+    private Marker marcador = null;
+    // Posicion
+    private FusedLocationProviderClient mPosicion;
+
+
 
 
     // Le pasamos el tipo de modo y objeto para activar o desactivar controles
@@ -112,6 +114,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         //juegoMain = juego;
     }
 
+
     public static LugarDetalleFragment newInstance() {
         return new LugarDetalleFragment();
     }
@@ -126,15 +129,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // Para Obtener el mapa dentro de un Fragment
-        mContext = getActivity();
-        FragmentManager fm = getActivity().getSupportFragmentManager();/// getChildFragmentManager();
-        supportMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.mMap);
-        if (supportMapFragment == null) {
-            supportMapFragment = SupportMapFragment.newInstance();
-            fm.beginTransaction().replace(R.id.mMap, supportMapFragment).commit();
-        }
-        supportMapFragment.getMapAsync(this);
+
 
         // Obtenemos los elementos de la interfaz
         iniciarComponentesIU();
@@ -143,6 +138,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         iniciarEventosIU();
 
         iniciarSpiner();
+
+        // iniciar Mapa
+        iniciarMapa();
 
         // Procesamos el lugar
         procesarModoVisualizacion();
@@ -469,6 +467,19 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     }
 
+    private void iniciarMapa(){
+        // Para Obtener el mapa dentro de un Fragment
+        FragmentManager fm = getActivity().getSupportFragmentManager();/// getChildFragmentManager();
+        supportMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.mMap);
+        if (supportMapFragment == null) {
+            supportMapFragment = SupportMapFragment.newInstance();
+            fm.beginTransaction().replace(R.id.mMap, supportMapFragment).commit();
+        }
+        supportMapFragment.getMapAsync(this);
+
+
+    }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -480,14 +491,74 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        // Queda cambiar los modos
+
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        // Configuramos el botón de localización
+        mMap.setMyLocationEnabled(true);
+
+        // Cargamos el evento del mapa click en marcador
+        mMap.setOnMarkerClickListener(this);
+        // Mapa híbrido, lo normal es usar el
+        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        // Que se vea la interfaz y la brújula por ejemplo
+        // También podemos quitar gestos
+        UiSettings uiSettings = mMap.getUiSettings();
+        // Activamos los gestos
+        uiSettings.setScrollGesturesEnabled(true);
+        uiSettings.setTiltGesturesEnabled(true);
+        // Activamos los controles de zoom
+        uiSettings.setZoomControlsEnabled(true);
+        // Actiovamos la barra de herramientas
+        uiSettings.setMapToolbarEnabled(true);
+
+        // Hacemos el zoom por defecto mínimo
+        mMap.setMinZoomPreference(12.0f);
+
+        // Activo el evento del marcador
+        activarEventosMarcdores();
+
+        // La llevamos a un lugar la camara
+        LatLng ll = new LatLng(38.9860385, -3.9620074);
+        // Movemos la camara
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(ll));
     }
 
 
+    private void activarEventosMarcdores() {
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                // Creamos el marcador
+                // Borramos el marcador Touch si está puesto
+                if (marcador != null) {
+                    marcador.remove();
+                }
+                marcador = mMap.addMarker(new MarkerOptions()
+                        // Posición
+                        .position(point)
+                        // Título
+                        .title("Nuevo Lugar")
+                        // Subtitulo
+                        //.snippet("Tu")
+                        // Color o tipo d icono
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                );
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
+
+            }
+        });
+    }
+
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+            // Si pulsas ayunatmiento, si muestro el toast si no nada
+            //String titulo = marker.getTitle();
+            //Toast.makeText(getContext(),"Estás en: " + marker.getPosition().latitude+","+marker.getPosition().longitude,
+            //                Toast.LENGTH_SHORT).show();
+            return false;
+        }
 
 }
