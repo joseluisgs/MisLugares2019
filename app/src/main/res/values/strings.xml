@@ -29,4 +29,5 @@
         <item>Bar</item>
         <item>Comida</item>
     </string-array>
+    <string name="title_activity_maps">Map</string>
 </resources>

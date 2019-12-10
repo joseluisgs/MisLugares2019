@@ -42,7 +42,7 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 
-public class LugarDetalleFragment extends Fragment {
+public class LugarDetalleFragment extends Fragment  {
 
     // Permisos
     private static final int LOCATION_REQUEST_CODE = 1; // Para los permisos
@@ -145,7 +145,7 @@ public class LugarDetalleFragment extends Fragment {
         this.btnCamara = (FloatingActionButton) getView().findViewById(R.id.ibDetalleLugarCamara);
         //
         this.etNombre = (TextInputLayout) getView().findViewById(R.id.tvDetalleLugarNombre);
-        this.etCoordenadas = (TextInputLayout) getView().findViewById(R.id.tvDetalleLugarCoordenadas);
+        //this.etCoordenadas = (TextInputLayout) getView().findViewById(R.id.tvDetalleLugarCoordenadas);
         this.ivJuego = (ImageView) getView().findViewById(R.id.ivDetalleLugar);
 
 
