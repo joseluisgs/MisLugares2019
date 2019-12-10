@@ -121,8 +121,8 @@
                   android:layout_height="match_parent"
                   android:layout_width="match_parent"
                   android:layout_marginBottom="10dp"
-                  android:id="@+id/map"
-                  tools:context=".MapsActivity"
+                  android:id="@+id/mMap"
+                  tools:context="com.example.mislugares.UI.noticias.NoticiasFragment"
                   android:name="com.google.android.gms.maps.SupportMapFragment" android:layout_marginTop="10dp"
                   android:layout_marginStart="10dp" android:layout_marginEnd="10dp"
                   android:layout_below="@+id/linearLayoutDetalleLugar"/>

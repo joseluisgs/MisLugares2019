@@ -2,6 +2,7 @@ package com.example.mislugares.UI.lugares;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -29,10 +30,17 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.fragment.app.FragmentManager;
 import com.example.mislugares.MainActivity;
 import com.example.mislugares.Modelos.Lugar;
 import com.example.mislugares.R;
 import com.example.mislugares.Utilidades.Utilidades;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
@@ -42,7 +50,7 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 
-public class LugarDetalleFragment extends Fragment  {
+public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback {
 
     // Permisos
     private static final int LOCATION_REQUEST_CODE = 1; // Para los permisos
@@ -75,10 +83,14 @@ public class LugarDetalleFragment extends Fragment  {
     // Camara
     private static final int GALERIA = 1;
     private static final int CAMARA = 2;
-
     private Uri photoURI;
     private static final String IMAGE_DIRECTORY = "/lugares";
     private static final int PROPORCION = 600;
+
+    // Mapa
+    private Context mContext;
+    private SupportMapFragment supportMapFragment;
+    private GoogleMap mMap;
 
 
     // Le pasamos el tipo de modo y objeto para activar o desactivar controles
@@ -113,6 +125,16 @@ public class LugarDetalleFragment extends Fragment  {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        // Para Obtener el mapa dentro de un Fragment
+        mContext = getActivity();
+        FragmentManager fm = getActivity().getSupportFragmentManager();/// getChildFragmentManager();
+        supportMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.mMap);
+        if (supportMapFragment == null) {
+            supportMapFragment = SupportMapFragment.newInstance();
+            fm.beginTransaction().replace(R.id.mMap, supportMapFragment).commit();
+        }
+        supportMapFragment.getMapAsync(this);
 
         // Obtenemos los elementos de la interfaz
         iniciarComponentesIU();
@@ -445,6 +467,25 @@ public class LugarDetalleFragment extends Fragment  {
         }
 
 
+    }
+
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(-34, 151);
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
 
