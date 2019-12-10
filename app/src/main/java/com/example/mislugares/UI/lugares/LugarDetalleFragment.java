@@ -86,11 +86,14 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     private Context mContext;
     private SupportMapFragment supportMapFragment;
     private GoogleMap mMap;
-    private LatLng posicion;
     // Marcador
     private Marker marcador = null;
     // Posicion
     private FusedLocationProviderClient mPosicion;
+    private Location localizacion;
+    private LatLng posicion;
+
+
 
 
 
@@ -250,7 +253,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         // Ponemos el spinner
         iniciarSpiner();
         fabAccion.setBackgroundTintList(ColorStateList.valueOf(Color
-                .parseColor("#9171CF")));
+                .parseColor("#52B0EC")));
     }
 
     // Actualiza los datos
@@ -469,6 +472,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     private void iniciarMapa(){
         // Para Obtener el mapa dentro de un Fragment
+        mPosicion = LocationServices.getFusedLocationProviderClient(getActivity());
         FragmentManager fm = getActivity().getSupportFragmentManager();/// getChildFragmentManager();
         supportMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.mMap);
         if (supportMapFragment == null) {
@@ -525,6 +529,34 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         // Movemos la camara
         mMap.moveCamera(CameraUpdateFactory.newLatLng(ll));
     }
+
+
+    private void obtenerPosicion() {
+        try {
+                // Lo lanzamos como tarea concurrente
+                Task<Location> local = mPosicion.getLastLocation();
+                local.addOnCompleteListener(getActivity(), new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        if (task.isSuccessful()) {
+                            // Actualizamos la última posición conocida
+                            localizacion = task.getResult();
+                            posicion = new LatLng(localizacion.getLatitude(),
+                                    localizacion.getLongitude());
+                            // Añadimos un marcador especial para poder operar con esto
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion));
+
+                        } else {
+                            Log.d("GPS", "No se encuetra la última posición.");
+                            Log.e("GPS", "Exception: %s", task.getException());
+                        }
+                    }
+                });
+        } catch (SecurityException e)  {
+            Log.e("Exception: %s", e.getMessage());
+        }
+    }
+
 
 
     private void activarEventosMarcdores() {
