@@ -171,7 +171,6 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         //this.etCoordenadas = (TextInputLayout) getView().findViewById(R.id.tvDetalleLugarCoordenadas);
         this.ivJuego = (ImageView) getView().findViewById(R.id.ivDetalleLugar);
 
-
     }
 
     // iniciamos los eventos de la IU
@@ -252,8 +251,12 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     private void modoInsertar() {
         // Ponemos el spinner
         iniciarSpiner();
+        //ponemos el botón del color e icono
+        fabAccion.setImageResource(R.drawable.ic_lugar);
         fabAccion.setBackgroundTintList(ColorStateList.valueOf(Color
                 .parseColor("#52B0EC")));
+        // Obtenemos la posición actual del mapa
+        obtenerPosicionActualMapa();
     }
 
     // Actualiza los datos
@@ -303,7 +306,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
      //Se trata de un proceso muy parecido al de construir un adaptador para un recyclerView
      //solo que este ya nos lo "regala" Android
     private void iniciarSpiner(){
-            // Leemos los datos del XML
+            // Leemos los datos del XML lo cogemos del XML Strings
                 ArrayAdapter<CharSequence> adapter =
                 ArrayAdapter.createFromResource(getContext(),
                         R.array.tipos_lugares,
@@ -315,7 +318,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
             this.spinnerLugarDetalleTipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    //El valor escogido en el spinner se lo seteamos al TextInputLayout de la plataforma
+                    //El valor escogido en el spinner se lo ponemos al TextInputLayout de Tipo
                     etTipo.getEditText().setText(spinnerLugarDetalleTipo.getSelectedItem().toString());
                 }
 
@@ -470,6 +473,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     }
 
+    // Método para iniciar el mapa indepoendientemente del modo
     private void iniciarMapa(){
         // Para Obtener el mapa dentro de un Fragment
         mPosicion = LocationServices.getFusedLocationProviderClient(getActivity());
@@ -496,7 +500,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        // Queda cambiar los modos
+       // Configuración del mapa por defecto para todos los modos
 
         mMap = googleMap;
 
@@ -524,14 +528,11 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         // Activo el evento del marcador
         activarEventosMarcdores();
 
-        // La llevamos a un lugar la camara
-        LatLng ll = new LatLng(38.9860385, -3.9620074);
-        // Movemos la camara
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(ll));
+
     }
 
 
-    private void obtenerPosicion() {
+    private void obtenerPosicionActualMapa() {
         try {
                 // Lo lanzamos como tarea concurrente
                 Task<Location> local = mPosicion.getLastLocation();
@@ -578,7 +579,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                         // Color o tipo d icono
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                 );
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
+                // Guardo la posición porque me va a servir y muevo la camara
+                posicion = point;
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion));
 
             }
         });
