@@ -9,6 +9,9 @@ public class Lugar {
     private float longitud;
     private String imagen;
 
+    public Lugar(){
+
+    }
     public Lugar(int id, String nombre, String tipo, String fecha, float latitud, float longitud, String imagen){
         this.id = id;
         this.nombre = nombre;

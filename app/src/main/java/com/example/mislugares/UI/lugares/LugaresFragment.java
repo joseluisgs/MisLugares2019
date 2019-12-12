@@ -1,10 +1,6 @@
 package com.example.mislugares.UI.lugares;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -249,16 +245,29 @@ public class LugaresFragment extends Fragment {
     // Es que vamos de derecha a izquierda
     private void botonDerecho(Canvas c, float dX, View itemView) {
         // Pintamos de rojo y ponemos el icono
+        Bitmap icon;
+        float height = (float) itemView.getBottom() - (float) itemView.getTop();
+        float width = height / 3;
         p.setColor(Color.RED);
         RectF background = new RectF((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom());
         c.drawRect(background, p);
+        icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_eliminar_sweep);
+        RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width, (float) itemView.getTop() + width, (float) itemView.getRight() - width, (float) itemView.getBottom() - width);
+        c.drawBitmap(icon, null, icon_dest, p);
     }
     // Pintamos un botón izquierdo en la posicón del color que se indica
     private void botonIzquierdo(Canvas c, float dX, View itemView) {
         // Pintamos de azul y ponemos el icono
+        Bitmap icon;
+        float height = (float) itemView.getBottom() - (float) itemView.getTop();
+        float width = height / 3;
         p.setColor(Color.BLUE);
         RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom());
         c.drawRect(background, p);
+        icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_detalles);
+        RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float) itemView.getTop() + width, (float) itemView.getLeft() + 2 * width, (float) itemView.getBottom() - width);
+        c.drawBitmap(icon, null, icon_dest, p);
+
     }
 
     // Actualizar elemento de la lista

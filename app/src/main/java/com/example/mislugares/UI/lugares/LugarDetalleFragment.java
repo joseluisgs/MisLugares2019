@@ -8,11 +8,13 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import com.example.mislugares.Controladores.ControladorLugares;
 import com.example.mislugares.MainActivity;
 import com.example.mislugares.Modelos.Lugar;
 import com.example.mislugares.R;
@@ -68,8 +71,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     private Button btnFecha;
     private FloatingActionButton fabAccion;
     private TextInputLayout etNombre;
-    private TextInputLayout etCoordenadas;
-    private ImageView ivJuego;
+    private ImageView ivLugar;
     private FloatingActionButton btnCamara;
     // Otras
     private Calendar calendar;
@@ -81,6 +83,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     private Uri photoURI;
     private static final String IMAGE_DIRECTORY = "/lugares";
     private static final int PROPORCION = 600;
+    private Bitmap imagen;
 
     // Mapa
     private Context mContext;
@@ -169,7 +172,17 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         //
         this.etNombre = (TextInputLayout) getView().findViewById(R.id.tvDetalleLugarNombre);
         //this.etCoordenadas = (TextInputLayout) getView().findViewById(R.id.tvDetalleLugarCoordenadas);
-        this.ivJuego = (ImageView) getView().findViewById(R.id.ivDetalleLugar);
+        this.ivLugar = (ImageView) getView().findViewById(R.id.ivDetalleLugar);
+
+        // Ponemos como foto, la foto por defecto
+        this.imagen = ((BitmapDrawable)this.ivLugar.getDrawable()).getBitmap();
+
+        // Procesamos la fecha
+        calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+        tvFecha.setText(day + "/" + (month + 1) + "/" + year);
 
     }
 
@@ -226,7 +239,6 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     private void desactivarComponentesIU() {
         this.etNombre.setEnabled(false);
         this.tvFecha.setEnabled(false);
-        this.etCoordenadas.setEnabled(false);
         this.etTipo.setEnabled(false);
         this.spinnerLugarDetalleTipo.setEnabled(false);
         this.btnFecha.setEnabled(false);
@@ -238,14 +250,12 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         // Datos
         this.etNombre.getEditText().setText(this.lugar.getNombre());
         this.tvFecha.setText(this.lugar.getFecha());
-        this.etCoordenadas.getEditText().setText("Lat: "+ String.valueOf(this.lugar.getLatitud() +
-                "Long: "+ String.valueOf(this.lugar.getLongitud())));
         this.etTipo.getEditText().setText(this.lugar.getTipo());
         // Procesamos la imagen proprocional
         Bitmap imagen = Utilidades.base64ToBitmap(lugar.getImagen());
         float prop= PROPORCION / (float) imagen.getWidth();
         Bitmap imagenLugar = Bitmap.createScaledBitmap(imagen, PROPORCION, (int) (imagen.getHeight() * prop), false);
-        this.ivJuego.setImageBitmap(imagenLugar);
+        this.ivLugar.setImageBitmap(imagenLugar);
     }
 
     private void modoInsertar() {
@@ -372,7 +382,39 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     // Inserta un lugar en la base de datos
     private void insertarLugar() {
-        Snackbar.make(getView(), "¡Lugar añadido!", Snackbar.LENGTH_LONG).show();
+        // Comprbamos que todos los datos se han introducido
+        if(camposNoNulos()) {
+            // Cargamos los datos, lo hago poco a poco para ver que ha pasado
+            Lugar lugar = new Lugar();
+            lugar.setNombre(this.etNombre.getEditText().getText().toString());
+            lugar.setFecha(this.tvFecha.getText().toString());
+            lugar.setTipo(this.spinnerLugarDetalleTipo.getSelectedItem().toString());
+            lugar.setLatitud((float) posicion.latitude);
+            lugar.setLongitud((float) posicion.longitude);
+            lugar.setImagen(Utilidades.bitmapToBase64(imagen));
+
+            ControladorLugares c = ControladorLugares.getControlador(getContext());
+            if (c.insertarLugar(lugar)) {
+                Snackbar.make(getView(), "¡Lugar añadido con éxito!", Snackbar.LENGTH_LONG).show();
+            } else {
+                Snackbar.make(getView(), "Ha ahbido un error al procesar su lugar", Snackbar.LENGTH_LONG).show();
+            }
+        }
+
+
+    }
+
+    private boolean camposNoNulos(){
+        boolean sal = true;
+        if(TextUtils.isEmpty(this.etNombre.getEditText().getText().toString())) {
+            this.etNombre.setError("El nombre no puede ser vacío");
+            sal = false;
+        }
+        if(TextUtils.isEmpty(this.etTipo.getEditText().getText().toString())) {
+            this.etNombre.setError("El tipo no puede ser vacío");
+            sal = false;
+        }
+        return sal;
     }
 
     // Tomamos la foto y seleccionamos de la galeria
@@ -446,7 +488,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                     // Actuializamos el bitmap para ese tamaño
                     Bitmap foto = Bitmap.createScaledBitmap(bitmap, PROPORCION, (int) (bitmap.getHeight() * prop), false);
                     // Asignamos la imagen
-                    this.ivJuego.setImageBitmap(foto);
+                    imagen = foto;
+                    this.ivLugar.setImageBitmap(imagen);
+
 
 
                 } catch (IOException e) {
@@ -462,7 +506,8 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
                 bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoURI);
                 //ponemos la imagen
-                this.ivJuego.setImageBitmap(bitmap);
+                imagen = bitmap;
+                this.ivLugar.setImageBitmap(imagen);
 
             } catch (Exception e) {
                 e.printStackTrace();

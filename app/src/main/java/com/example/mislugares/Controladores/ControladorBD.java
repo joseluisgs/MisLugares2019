@@ -23,8 +23,11 @@ public class ControladorBD extends SQLiteOpenHelper {
             "fecha DATE," +
             "latitud REAL," +
             "longitud REAL, " +
-            "imagen BLOB, " +
-            "FOREIGN KEY (tipo) REFERENCES Tipos(tipo) )";
+            "imagen BLOB )";
+
+            // Si quisisesemos hacer clave externa con tipos
+            // Pero los gestionaemos con un string en values
+            //"FOREIGN KEY (tipo) REFERENCES Tipos(tipo) )";
 
     // Esta la hago para cargar un combo box (Spinner)
     // No lo vamos a hacer así porque son valores estáticos

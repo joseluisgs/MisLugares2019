@@ -26,7 +26,7 @@ public class Utilidades {
 
     // Bitmp a base 64
     public static String bitmapToBase64(Bitmap bitmap) {
-        // Comrimimos al 60 %
+        // Comrimimos al 60 % la imagen
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream);
         byte[] byteArray = stream.toByteArray();

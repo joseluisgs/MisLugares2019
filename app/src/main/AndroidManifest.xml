@@ -19,6 +19,8 @@
 
     <!-- Esto es importante porque si no falla el RSS, cosas del android 9
     android:usesCleartextTraffic="true" al no tener la conexión a internet permitoda
+
+    android:debuggable="true" -> para depurar
     -->
 
     <application

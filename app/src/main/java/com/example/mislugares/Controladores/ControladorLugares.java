@@ -36,6 +36,7 @@ public class ControladorLugares {
     }
 
     // Lista todos los lugares...
+    //Filtro sería el order
     public ArrayList<Lugar> listarLugares(String filtro) {
         // Abrimos la BD en Modo Lectura
         ArrayList<Lugar> lista = new ArrayList<Lugar>();
@@ -65,6 +66,36 @@ public class ControladorLugares {
         return lista;
     }
 
+    // Métodp para insertar un lugar
+    public boolean insertarLugar(Lugar lugar){
+        // se insertan sin problemas porque lugares es clave primaria, si ya están no hace nada
+        // Abrimos la BD en modo escritura
+        ControladorBD bdLugares = new ControladorBD(context, ControladorBD.db_lugares, null, 1);
+        SQLiteDatabase bd = bdLugares.getWritableDatabase();
+        boolean sal = false;
+        try{
+            //Cargamos los parámetros
+            ContentValues nr = new ContentValues();
+            nr.put("nombre", lugar.getNombre());
+            nr.put("tipo", lugar.getTipo());
+            nr.put("fecha", lugar.getFecha());
+            nr.put("latitud", lugar.getLatitud());
+            nr.put("longitud", lugar.getLongitud());
+            nr.put("imagen", lugar.getImagen());
+            // insertamos en su tabla
+            bd.insert("Lugares", null, nr);
+            sal = true;
+        }catch(SQLException ex){
+            Log.d("Lugares", "Error al insertar un nuevo lugar " + ex.getMessage());
+        }finally {
+            bd.close();
+            bdLugares.close();
+            return sal;
+        }
+
+    }
+
+    /*
     // Aquí insertamos una serie de lugares por defecto para tenerlos siempre disponibles
     // Pero lo vamos a hacer con un XML, mira la clase String
     public void insertarTiposLugares(){
@@ -109,6 +140,8 @@ public class ControladorLugares {
         }
 
     }
+
+     */
 
 
 }
