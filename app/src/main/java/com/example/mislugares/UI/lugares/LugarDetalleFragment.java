@@ -179,10 +179,8 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
         // Procesamos la fecha
         calendar = Calendar.getInstance();
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int month = calendar.get(Calendar.MONTH);
-        int year = calendar.get(Calendar.YEAR);
-        tvFecha.setText(day + "/" + (month + 1) + "/" + year);
+        tvFecha.setText(calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1)
+                + "/" + calendar.get(Calendar.YEAR));
 
     }
 
@@ -256,6 +254,8 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         float prop= PROPORCION / (float) imagen.getWidth();
         Bitmap imagenLugar = Bitmap.createScaledBitmap(imagen, PROPORCION, (int) (imagen.getHeight() * prop), false);
         this.ivLugar.setImageBitmap(imagenLugar);
+
+
     }
 
     private void modoInsertar() {
@@ -265,8 +265,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         fabAccion.setImageResource(R.drawable.ic_lugar);
         fabAccion.setBackgroundTintList(ColorStateList.valueOf(Color
                 .parseColor("#52B0EC")));
-        // Obtenemos la posición actual del mapa
-        obtenerPosicionActualMapa();
+
     }
 
     // Actualiza los datos
@@ -293,6 +292,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         mostrarDatosLugar();
         iniciarSpiner(); // Esto lo quietaré
         this.fabAccion.hide();
+
     }
 
     // Actualizamos la interfaz y los menús que heredamos según nos convenga
@@ -342,9 +342,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     // Escogemos la fecha
     private void escogerFecha() {
          calendar = Calendar.getInstance();
-         int day = calendar.get(Calendar.DAY_OF_MONTH);
-         int month = calendar.get(Calendar.MONTH);
-         int year = calendar.get(Calendar.YEAR);
+
 
         //Abrimos el DataPickerDialog
         datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
@@ -353,7 +351,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                 tvFecha.setText(mDay + "/" + (mMonth + 1) + "/" + mYear);
                 //Log.i("Fecha",mDay + " " + mMonth + " " + mYear);
             }
-        }, year, month, day);
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 
@@ -534,6 +532,8 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     }
 
     /**
+     * Voy a programar aquí por comodidad toda la lógica del mapa
+     *
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
@@ -548,15 +548,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
        // Configuración del mapa por defecto para todos los modos
 
         mMap = googleMap;
-
-        // Configuramos el botón de localización
-        mMap.setMyLocationEnabled(true);
-
-        // Cargamos el evento del mapa click en marcador
-        mMap.setOnMarkerClickListener(this);
         // Mapa híbrido, lo normal es usar el
         mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        // Que se vea la interfaz y la brújula por ejemplo
+        // Modos de comprtamiento del mapa no genéricos
         // También podemos quitar gestos
         UiSettings uiSettings = mMap.getUiSettings();
         // Activamos los gestos
@@ -569,11 +563,47 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
         // Hacemos el zoom por defecto mínimo
         mMap.setMinZoomPreference(12.0f);
+        switch (modo) {
+            case INSERTAR:
+                mapaInsertar();
+                break;
+            case VISUALIZAR:
+                mapaVisualizar();
+                break;
+            default:
+                break;
+        }
 
+        mMap.setOnMarkerClickListener(this);
+
+    }
+
+    // Comportamiento del mapa particular para insertar
+    private void mapaInsertar(){
+        // Configuramos el botón de localización
+        mMap.setMyLocationEnabled(true);
         // Activo el evento del marcador
         activarEventosMarcdores();
+        obtenerPosicionActualMapa();
+    }
 
-
+    // Comportamiento del mapa a visualizar
+    private void mapaVisualizar(){
+        // Vamos a dejar que nos deje ir a l lugar obteniendo la psoición actual
+        //mMap.setMyLocationEnabled(true);
+        // procesamos el mapa moviendo la camara allu
+        posicion = new LatLng(lugar.getLatitud(), lugar.getLongitud());
+        marcador = mMap.addMarker(new MarkerOptions()
+                        // Posición
+                        .position(posicion)
+                        // Título
+                        .title("Tu posición")
+                        // Subtitulo
+                        .snippet(lugar.getNombre())
+                        // Color o tipo d icono
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                );
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion));
     }
 
 
@@ -611,16 +641,16 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
             public void onMapClick(LatLng point) {
                 // Creamos el marcador
                 // Borramos el marcador Touch si está puesto
-                if (marcador != null) {
+                if ((marcador != null) && (modo!=VISUALIZAR)) {
                     marcador.remove();
                 }
                 marcador = mMap.addMarker(new MarkerOptions()
                         // Posición
                         .position(point)
                         // Título
-                        .title("Nuevo Lugar")
+                        .title("Tu posición")
                         // Subtitulo
-                        //.snippet("Tu")
+                        .snippet(etNombre.getEditText().getText().toString())
                         // Color o tipo d icono
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                 );

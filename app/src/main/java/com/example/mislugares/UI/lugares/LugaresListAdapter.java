@@ -56,7 +56,7 @@ public class LugaresListAdapter extends RecyclerView.Adapter<LugaresListAdapter.
         final Lugar lugar = listaLugares.get(position);
 
 
-        // Gestionamos la image, la sacamos del string, costruimos el bitmap y lo pintamos
+        // Gestionamos la imagen, la sacamos del string, costruimos el bitmap y lo pintamos
         Bitmap imagenLugar = Utilidades.base64ToBitmap(lugar.getImagen());
         float proporcion = 600 / (float) imagenLugar.getWidth();
         Bitmap imagenFinal = Bitmap.createScaledBitmap(imagenLugar, 600,
