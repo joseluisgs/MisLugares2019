@@ -177,9 +177,6 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         //this.etCoordenadas = (TextInputLayout) getView().findViewById(R.id.tvDetalleLugarCoordenadas);
         this.ivLugar = (ImageView) getView().findViewById(R.id.ivDetalleLugar);
 
-        // Ponemos como foto, la foto por defecto
-        this.imagen = ((BitmapDrawable)this.ivLugar.getDrawable()).getBitmap();
-
         // Procesamos la fecha
         calendar = Calendar.getInstance();
         tvFecha.setText(calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1)
@@ -257,6 +254,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         float prop= PROPORCION / (float) imagen.getWidth();
         Bitmap imagenLugar = Bitmap.createScaledBitmap(imagen, PROPORCION, (int) (imagen.getHeight() * prop), false);
         this.ivLugar.setImageBitmap(imagenLugar);
+        this.imagen = imagenLugar;
 
 
     }
@@ -269,6 +267,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         fabAccion.setBackgroundTintList(ColorStateList.valueOf(Color
                 .parseColor("#52B0EC")));
 
+        // Ponemos como foto, la foto por defecto
+        this.imagen = ((BitmapDrawable)this.ivLugar.getDrawable()).getBitmap();
+
     }
 
     // Actualiza los datos
@@ -277,7 +278,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         iniciarSpiner();
         fabAccion.setImageResource(R.drawable.ic_actualizar);
         fabAccion.setBackgroundTintList(ColorStateList.valueOf(Color
-                .parseColor("33FFDA")));
+                .parseColor("#6699ff")));
     }
 
     // Elimina los datos
@@ -374,10 +375,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         }
     }
 
-    private void actualizarLugar() {
-        Snackbar.make(getView(), "¡Lugar actualizado!", Snackbar.LENGTH_LONG).show();
-    }
-
+    // Elimina un lugar
     private void eliminarLugar() {
         // Mostramos el dialogo de eliminar
         AlertDialog.Builder deleteDialog = new AlertDialog.Builder(getContext());
@@ -399,7 +397,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                                     // Volver
                                     volver();
                                 } else {
-                                    Snackbar.make(getView(), "Ha existido un error al procesar su lugar", Snackbar.LENGTH_LONG).show();
+                                    Snackbar.make(getView(), "Ha existido un error al eliminar su lugar", Snackbar.LENGTH_LONG).show();
                                 }
                                 break;
                             case 1:
@@ -417,7 +415,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         // Comprbamos que todos los datos se han introducido
         if(camposNoNulos()) {
             // Cargamos los datos, lo hago poco a poco para ver que ha pasado
-            Lugar lugar = new Lugar();
+            lugar = new Lugar();
             lugar.setNombre(this.etNombre.getEditText().getText().toString());
             lugar.setFecha(this.tvFecha.getText().toString());
             lugar.setTipo(this.spinnerLugarDetalleTipo.getSelectedItem().toString());
@@ -431,20 +429,62 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                 // Volvemos
                 volver();
             } else {
-                Snackbar.make(getView(), "Ha habido un error al procesar su lugar", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getView(), "Ha habido un error al insertar su lugar", Snackbar.LENGTH_LONG).show();
             }
         }
 
 
     }
 
+    private void actualizarLugar() {
+        // Mostramos el dialogo de eliminar
+        AlertDialog.Builder deleteDialog = new AlertDialog.Builder(getContext());
+
+        deleteDialog.setTitle("¿Estás seguro de querer actualizar el lugar: "+lugar.getNombre()+" ?");
+        String[] deleteDialogItems = {
+                "Sí",
+                "No"};
+        deleteDialog.setItems(deleteDialogItems,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                if(camposNoNulos()) {
+                                    // No crear que machacamos el id
+                                    lugar.setNombre(etNombre.getEditText().getText().toString());
+                                    lugar.setFecha(tvFecha.getText().toString());
+                                    lugar.setTipo(spinnerLugarDetalleTipo.getSelectedItem().toString());
+                                    lugar.setLatitud((float) posicion.latitude);
+                                    lugar.setLongitud((float) posicion.longitude);
+                                    lugar.setImagen(Utilidades.bitmapToBase64(imagen));
+                                    ControladorLugares c = ControladorLugares.getControlador(getContext());
+                                    if (c.actualizarLugar(lugar)) {
+                                        Snackbar.make(getView(), "¡Lugar actualizado con éxito!", Snackbar.LENGTH_LONG).show();
+                                        // Volvemos
+                                        volver();
+                                    } else {
+                                        Snackbar.make(getView(), "Ha habido un error al actualizar su lugar", Snackbar.LENGTH_LONG).show();
+                                    }
+                                }
+                                break;
+                            case 1:
+                                Snackbar.make(getView(),"No se ha realizado ninguna acción",Snackbar.LENGTH_LONG).show();
+                                break;
+                        }
+                    }
+                });
+        deleteDialog.show();
+
+    }
+
     // Para volver una vez insertado
     // O bloqueamos la interfaz para no icializarlo
-    private void volver(){
+    public void volver(){
         ((MainActivity)getActivity()).onBackPressed();
     }
 
-    private boolean camposNoNulos(){
+    public boolean camposNoNulos(){
         boolean sal = true;
         if(TextUtils.isEmpty(this.etNombre.getEditText().getText().toString())) {
             this.etNombre.setError("El nombre no puede ser vacío");
@@ -615,6 +655,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
             case ELIMINAR:
                 mapaVisualizar();
                 break;
+            case ACTUALIZAR:
+                mapaActualizar();
+
             default:
                 break;
         }
@@ -648,6 +691,27 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                         // Color o tipo d icono
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
                 );
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion));
+    }
+
+    // Comportamiento del mapa a actualizar
+    private void mapaActualizar(){
+        // Vamos a dejar que nos deje ir a l lugar obteniendo la psoición actual
+        mMap.setMyLocationEnabled(true);
+        // Activamos eventos marcadores
+        activarEventosMarcdores();
+        // procesamos el mapa moviendo la camara allu
+        posicion = new LatLng(lugar.getLatitud(), lugar.getLongitud());
+        marcador = mMap.addMarker(new MarkerOptions()
+                // Posición
+                .position(posicion)
+                // Título
+                .title("Tu posición")
+                // Subtitulo
+                .snippet(lugar.getNombre())
+                // Color o tipo d icono
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
+        );
         mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion));
     }
 
@@ -685,7 +749,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
             public void onMapClick(LatLng point) {
                 // Creamos el marcador
                 // Borramos el marcador Touch si está puesto
-                if ((marcador != null) && (modo!=VISUALIZAR)) {
+                if (marcador != null) {
                     marcador.remove();
                 }
                 marcador = mMap.addMarker(new MarkerOptions()

@@ -115,15 +115,51 @@ public class ControladorLugares {
         SQLiteDatabase bd = bdLugares.getWritableDatabase();
         boolean sal = false;
         try{
-            //Cargamos los parámetros es un vector, en este caso es solo uno, pero podrían ser mas
-            String[] args = {String.valueOf(lugar.getId())};
+
             // Creamos el where
             String where = "id = ?";
+            //Cargamos los parámetros es un vector, en este caso es solo uno, pero podrían ser mas
+            String[] args = {String.valueOf(lugar.getId())};
+            // En el fondo hemos hecho where id = lugar.id
             // Eliminamos. En res tenemos el numero de filas eliminadas por si queremos tenerlo en cuenta
             int res = bd.delete("Lugares", where, args);
             sal = true;
         }catch(SQLException ex){
             Log.d("Lugares", "Error al eliminar este lugar " + ex.getMessage());
+        }finally {
+            bd.close();
+            bdLugares.close();
+            return sal;
+        }
+
+    }
+
+    // Actualiza un lugar
+    public boolean actualizarLugar(Lugar lugar){
+        // Abrimos la BD en modo escritura
+        ControladorBD bdLugares = new ControladorBD(context, ControladorBD.db_lugares, null, 1);
+        SQLiteDatabase bd = bdLugares.getWritableDatabase();
+        boolean sal = false;
+        try{
+            // Cargamos los valores
+            ContentValues valores = new ContentValues();
+            valores.put("nombre", lugar.getNombre());
+            valores.put("tipo", lugar.getTipo());
+            valores.put("fecha", lugar.getFecha());
+            valores.put("latitud", lugar.getLatitud());
+            valores.put("longitud", lugar.getLongitud());
+            valores.put("imagen", lugar.getImagen());
+
+            // Creamos el where
+            String where = "id = ?";
+            //Cargamos los parámetros es un vector, en este caso es solo uno, pero podrían ser mas
+            String[] args = {String.valueOf(lugar.getId())};
+            // En el fondo hemos hecho where id = lugar.id
+            // Actualizamos. En res tenemos el numero de filas actualizadas por si queremos tenerlo en cuenta
+            int res = bd.update("Lugares", valores,where, args);
+            sal = true;
+        }catch(SQLException ex){
+            Log.d("Lugares", "Error al actualizar este lugar " + ex.getMessage());
         }finally {
             bd.close();
             bdLugares.close();
