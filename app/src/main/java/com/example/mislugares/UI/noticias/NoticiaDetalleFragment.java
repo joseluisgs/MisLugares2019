@@ -120,7 +120,7 @@ public class NoticiaDetalleFragment extends Fragment {
 
         // Muestro los elementos de menú que quiero en este fragment
         // Menú
-        ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_compartir).setVisible(true);
+        ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_compartir_noticia).setVisible(true);
         ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_atras).setVisible(true);
 
         //Para ocultar el acceso al menú lateral

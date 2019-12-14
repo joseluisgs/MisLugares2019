@@ -6,7 +6,9 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.mislugares.Controladores.ControladorLugares;
+import com.example.mislugares.Modelos.Lugar;
 import com.example.mislugares.Modelos.Noticia;
+import com.example.mislugares.UI.lugares.LugarDetalleFragment;
 import com.example.mislugares.UI.noticias.NoticiaDetalleFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -138,7 +140,8 @@ public class MainActivity extends AppCompatActivity {
     private void ocultarOcionesMenu(){
         menu.findItem(R.id.menu_atras).setVisible(false);
         menu.findItem(R.id.menu_settings).setVisible(false);
-        menu.findItem(R.id.menu_compartir).setVisible(false);
+        menu.findItem(R.id.menu_compartir_lugar).setVisible(false);
+        menu.findItem(R.id.menu_compartir_noticia).setVisible(false);
     }
 
     // GETER & SETTER Menu
@@ -155,9 +158,14 @@ public class MainActivity extends AppCompatActivity {
                 //se llama a la función para recuperar el fragment de la pila
                 onBackPressed();
                 return true;
-            case R.id.menu_compartir:
+            case R.id.menu_compartir_noticia:
                 //llamamos a comartir noticias
                 compartirNoticia();
+                return true;
+
+            case R.id.menu_compartir_lugar:
+                //llamamos a comartir lugar
+                compartirLugar();
                 return true;
             default:
                 break;
@@ -237,12 +245,32 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // Comprarte un lugar
+    public void compartirLugar(){
+        // Esto debemos hacerlo, porque la opción de copratir está en la barra de herramientas
+        // en un menú
+        Lugar la = LugarDetalleFragment.lugarActual;
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        //
+        String body = la.getNombre()+" día: " + la.getFecha()+
+                "\nen lat: "+ la.getLatitud() + " - long: " + la.getLongitud()+"\n" +
+                "por Mis Lugares App";
+        intent.putExtra(Intent.EXTRA_SUBJECT,"Uno de mis lugares favoritos");
+        intent.putExtra(Intent.EXTRA_TEXT,body);
+        startActivity(Intent.createChooser(intent,"Compartir con"));
+
+    }
+
+
+
     // Inicia la interfaz por defectro en cada vista de Fragment o actividad
     public void ocultarElementosIU(){
         ocultarBotonesFlotantes();
         ocultarOcionesMenu();
     }
 
+    // Si quisiesemos cargar la BD por primera vez
     private void iniciarDatosBD(){
         // En nuestro caso necesitamos cargar estos datos
         //ControladorLugares c = ControladorLugares.getControlador(this);

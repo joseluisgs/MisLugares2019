@@ -47,8 +47,20 @@ public class ControladorLugares {
             // Podemos hacer la consulta directamente o parametrizada
             //Cursor c = bd.rawQuery("SELECT * FROM Lugares " + filtro, null);
             // http://www.sgoliver.net/blog/bases-de-datos-en-android-iii-consultarrecuperar-registros/
-            //String[] campos = null; // new String[] {"campo1, campo2"}; // null implica todos *
-            //String[] args = null; // new String[] {"usu1"}; // Sería un filtro del where
+
+            /* Ejemplo de cada campo de la consulta
+            String table = "table2";
+            String[] columns = {"column1", "column3"};
+            String selection = "column3 =?";
+            String[] selectionArgs = {"apple"};
+            String groupBy = null;
+            String having = null;
+            String orderBy = "column3 DESC";
+            String limit = "10";
+
+            Cursor cursor = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+             */
+
             Cursor c = bd.query("Lugares", null, null, null, null, null, filtro, null);
             if (c.moveToFirst()) {
                 do {
@@ -65,7 +77,8 @@ public class ControladorLugares {
         }
         return lista;
     }
-
+    // Manejar un CRUD
+    // https://parzibyte.me/blog/2019/02/04/tutorial-sqlite-android-crud-create-read-update-delete/
     // Métodp para insertar un lugar
     public boolean insertarLugar(Lugar lugar){
         // se insertan sin problemas porque lugares es clave primaria, si ya están no hace nada
@@ -75,18 +88,42 @@ public class ControladorLugares {
         boolean sal = false;
         try{
             //Cargamos los parámetros
-            ContentValues nr = new ContentValues();
-            nr.put("nombre", lugar.getNombre());
-            nr.put("tipo", lugar.getTipo());
-            nr.put("fecha", lugar.getFecha());
-            nr.put("latitud", lugar.getLatitud());
-            nr.put("longitud", lugar.getLongitud());
-            nr.put("imagen", lugar.getImagen());
-            // insertamos en su tabla
-            bd.insert("Lugares", null, nr);
+            ContentValues valores = new ContentValues();
+            valores.put("nombre", lugar.getNombre());
+            valores.put("tipo", lugar.getTipo());
+            valores.put("fecha", lugar.getFecha());
+            valores.put("latitud", lugar.getLatitud());
+            valores.put("longitud", lugar.getLongitud());
+            valores.put("imagen", lugar.getImagen());
+            // insertamos en su tabla, en long tenemos el id más alto creado
+            long res = bd.insert("Lugares", null, valores);
             sal = true;
         }catch(SQLException ex){
             Log.d("Lugares", "Error al insertar un nuevo lugar " + ex.getMessage());
+        }finally {
+            bd.close();
+            bdLugares.close();
+            return sal;
+        }
+
+    }
+
+    // Elimina un lugar. Podría hacerlo pasandole el objeto lugar
+    public boolean eliminarLugar(Lugar lugar){
+        // Abrimos la BD en modo escritura
+        ControladorBD bdLugares = new ControladorBD(context, ControladorBD.db_lugares, null, 1);
+        SQLiteDatabase bd = bdLugares.getWritableDatabase();
+        boolean sal = false;
+        try{
+            //Cargamos los parámetros es un vector, en este caso es solo uno, pero podrían ser mas
+            String[] args = {String.valueOf(lugar.getId())};
+            // Creamos el where
+            String where = "id = ?";
+            // Eliminamos. En res tenemos el numero de filas eliminadas por si queremos tenerlo en cuenta
+            int res = bd.delete("Lugares", where, args);
+            sal = true;
+        }catch(SQLException ex){
+            Log.d("Lugares", "Error al eliminar este lugar " + ex.getMessage());
         }finally {
             bd.close();
             bdLugares.close();

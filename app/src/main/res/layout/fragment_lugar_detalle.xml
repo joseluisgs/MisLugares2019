@@ -13,7 +13,7 @@
             android:layout_height="135dp"
             android:background="#C9C9EC"
             android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher_foreground" />
+            android:src="@mipmap/ic_launcher_foreground"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/ibDetalleLugarCamara"
@@ -27,7 +27,7 @@
             android:clickable="true"
             android:src="@android:drawable/ic_menu_camera"
             app:backgroundTint="#5790BD"
-            app:rippleColor="#FFFFFF" />
+            app:rippleColor="#FFFFFF"/>
 
     <RelativeLayout
 
@@ -50,7 +50,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -90,7 +90,7 @@
                     android:textAlignment="center"
                     android:enabled="false"
                     android:hint="Fecha Visita"
-                    android:inputType="date" />
+                    android:inputType="date"/>
 
 
             <com.google.android.material.button.MaterialButton
@@ -102,7 +102,7 @@
                     android:text="Seleccionar"
                     android:textAlignment="viewEnd"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                    app:icon="@drawable/ic_calendario" />
+                    app:icon="@drawable/ic_calendario"/>
 
         </LinearLayout>
 
@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvDetalleLugarTipo"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"/>
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:tools="http://schemas.android.com/tools"
@@ -137,7 +137,7 @@
                 android:layout_marginBottom="10dp"
                 android:clickable="true"
                 android:src="@drawable/ic_lugar"
-                app:backgroundTint="#52B0EC" />
+                app:backgroundTint="#52B0EC"/>
 
 
     </RelativeLayout>

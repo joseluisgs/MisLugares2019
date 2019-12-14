@@ -63,6 +63,8 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     // Lugar
     private Lugar lugar;
+    // Eso se hace para compartir
+    public static Lugar lugarActual;
 
     // Variables de la interfaz
     private Spinner spinnerLugarDetalleTipo;
@@ -116,6 +118,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     public LugarDetalleFragment(Lugar lugar, int modo) {
         this.lugar = lugar;
         this.modo = modo;
+        lugarActual = lugar;
         //Para el evento de compartir, que se gestiona en el main (es donde se crea el Toolbar)
         //juegoMain = juego;
     }
@@ -283,7 +286,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         mostrarDatosLugar();
         this.fabAccion.setImageResource(R.drawable.ic_eliminar);
         fabAccion.setBackgroundTintList(ColorStateList.valueOf(Color
-                .parseColor("FF3377")));
+                .parseColor("#FF3377")));
     }
 
     // Modo visualizar
@@ -302,7 +305,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
         // Muestro los elementos de menú que quiero en este fragment
         // Menú
-        //((MainActivity) getActivity()).getMenu().findItem(R.id.menu_compartir).setVisible(true);
+        ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_compartir_lugar).setVisible(true);
         ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_atras).setVisible(true);
 
         //Para ocultar el acceso al menú lateral
@@ -376,6 +379,37 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     }
 
     private void eliminarLugar() {
+        // Mostramos el dialogo de eliminar
+        AlertDialog.Builder deleteDialog = new AlertDialog.Builder(getContext());
+
+        deleteDialog.setTitle("¿Estás seguro de querer eliminar el lugar: "+lugar.getNombre()+" ?");
+        String[] deleteDialogItems = {
+                "Sí",
+                "No"};
+        deleteDialog.setItems(deleteDialogItems,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                // Cargamos el controlador
+                                ControladorLugares c = ControladorLugares.getControlador(getContext());
+                                if (c.eliminarLugar(lugar)) {
+                                    Snackbar.make(getView(), "¡Lugar eliminado con éxito!", Snackbar.LENGTH_LONG).show();
+                                    // Volver
+                                    volver();
+                                } else {
+                                    Snackbar.make(getView(), "Ha existido un error al procesar su lugar", Snackbar.LENGTH_LONG).show();
+                                }
+                                break;
+                            case 1:
+                                Snackbar.make(getView(),"No se ha realizado ninguna acción",Snackbar.LENGTH_LONG).show();
+                                break;
+                        }
+                    }
+                });
+        deleteDialog.show();
+
     }
 
     // Inserta un lugar en la base de datos
@@ -394,12 +428,20 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
             ControladorLugares c = ControladorLugares.getControlador(getContext());
             if (c.insertarLugar(lugar)) {
                 Snackbar.make(getView(), "¡Lugar añadido con éxito!", Snackbar.LENGTH_LONG).show();
+                // Volvemos
+                volver();
             } else {
-                Snackbar.make(getView(), "Ha ahbido un error al procesar su lugar", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getView(), "Ha habido un error al procesar su lugar", Snackbar.LENGTH_LONG).show();
             }
         }
 
 
+    }
+
+    // Para volver una vez insertado
+    // O bloqueamos la interfaz para no icializarlo
+    private void volver(){
+        ((MainActivity)getActivity()).onBackPressed();
     }
 
     private boolean camposNoNulos(){
@@ -570,6 +612,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
             case VISUALIZAR:
                 mapaVisualizar();
                 break;
+            case ELIMINAR:
+                mapaVisualizar();
+                break;
             default:
                 break;
         }
@@ -587,7 +632,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         obtenerPosicionActualMapa();
     }
 
-    // Comportamiento del mapa a visualizar
+    // Comportamiento del mapa en modo visualizar y eliminar
     private void mapaVisualizar(){
         // Vamos a dejar que nos deje ir a l lugar obteniendo la psoición actual
         //mMap.setMyLocationEnabled(true);
@@ -601,11 +646,10 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                         // Subtitulo
                         .snippet(lugar.getNombre())
                         // Color o tipo d icono
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
                 );
         mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion));
     }
-
 
     private void obtenerPosicionActualMapa() {
         try {
@@ -652,7 +696,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                         // Subtitulo
                         .snippet(etNombre.getEditText().getText().toString())
                         // Color o tipo d icono
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
                 );
                 // Guardo la posición porque me va a servir y muevo la camara
                 posicion = point;

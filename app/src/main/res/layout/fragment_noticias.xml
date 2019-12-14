@@ -14,15 +14,14 @@
             android:layout_height="match_parent">
 
 
-
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                tools:layout_editor_absoluteX="222dp"
-                tools:layout_editor_absoluteY="169dp" />
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:layout_editor_absoluteX="222dp"
+                    tools:layout_editor_absoluteY="169dp" android:background="#EEEDFC"/>
 
         </ScrollView>
 

@@ -9,11 +9,18 @@
         app:showAsAction="always" />
 
         <item
-        android:id="@+id/menu_compartir"
+        android:id="@+id/menu_compartir_noticia"
         android:icon="@android:drawable/ic_menu_share"
         android:orderInCategory="100"
         android:title="compartir"
         app:showAsAction="ifRoom" />
+
+    <item
+            android:id="@+id/menu_compartir_lugar"
+            android:icon="@android:drawable/ic_menu_share"
+            android:orderInCategory="100"
+            android:title="compartir"
+            app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_settings"

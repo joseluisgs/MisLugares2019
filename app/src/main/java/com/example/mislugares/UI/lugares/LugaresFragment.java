@@ -157,16 +157,16 @@ public class LugaresFragment extends Fragment {
                 String tipoFiltro = "";
                 switch (spinnerFiltro.getSelectedItemPosition()) {
                     case 1:
-                        tipoFiltro = "nombre ASC";
+                        tipoFiltro = "UPPER(nombre) ASC";
                         break;
                     case 2:
-                        tipoFiltro = "nombre ASC";
+                        tipoFiltro = "DATE(fecha) ASC";
                         break;
                     case 3:
-                        tipoFiltro = "fecha ASC";
+                        tipoFiltro = "UPPER(tipo) ASC";
                         break;
                     case 4:
-                        tipoFiltro = "tipo ASC";
+                        tipoFiltro = "nombre ASC";
                         break;
                     default:
                         break;
