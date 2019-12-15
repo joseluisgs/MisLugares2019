@@ -725,10 +725,14 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                         if (task.isSuccessful()) {
                             // Actualizamos la última posición conocida
                             localizacion = task.getResult();
-                            posicion = new LatLng(localizacion.getLatitude(),
-                                    localizacion.getLongitude());
-                            // Añadimos un marcador especial para poder operar con esto
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion));
+                            if(localizacion!=null) {
+                                posicion = new LatLng(localizacion.getLatitude(),
+                                        localizacion.getLongitude());
+                                // Añadimos un marcador especial para poder operar con esto
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion));
+                            }else{
+                                Snackbar.make(getView(),"No se ha encontrado su posoción actual",Snackbar.LENGTH_LONG).show();
+                            }
 
                         } else {
                             Log.d("GPS", "No se encuetra la última posición.");

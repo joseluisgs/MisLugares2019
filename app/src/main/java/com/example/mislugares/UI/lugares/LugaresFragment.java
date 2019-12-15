@@ -1,7 +1,10 @@
 package com.example.mislugares.UI.lugares;
 
+import android.content.Intent;
 import android.graphics.*;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +29,16 @@ import com.example.mislugares.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Locale;
+
+import static android.app.Activity.RESULT_OK;
 
 public class LugaresFragment extends Fragment {
 
     private static final int INSERTAR = 1;
     private static final int ELIMINAR = 2;
     private static final int ACTUALIZAR = 3;
+    private static final int VOZ = 10;
 
     private ArrayList<Lugar>lugares =new ArrayList<>();
     private RecyclerView rv;
@@ -107,6 +114,12 @@ public class LugaresFragment extends Fragment {
                nuevoLugar();
             }
         });
+        fabVoz.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controlVoz();
+            }
+        });
 
 
     }
@@ -127,6 +140,59 @@ public class LugaresFragment extends Fragment {
 
             }
         });
+    }
+
+    // Metodos de control por voz
+    private void controlVoz(){
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        //reconoce en el idioma del telefono
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "¿Cómo quieres ordenar la lista?");
+        try {
+            startActivityForResult(intent, VOZ);
+        } catch (Exception e) {
+        }
+    }
+
+    // Se llama en su activity result
+    // Se ejecuta al llamar a starActivityforResult
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == MainActivity.RESULT_CANCELED) {
+            return;
+        }
+
+
+        if (requestCode == VOZ) {
+            if (resultCode == RESULT_OK && data != null) {
+                ArrayList<String> voz = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                // Analizamos los que nos puede llegar
+                String secuencia="";
+                String tipoFiltro;
+                for(String v: voz){
+                    secuencia += " " + v;
+                }
+
+                if (secuencia != null) {
+                    if (secuencia.contains("nombre")) {
+                        tipoFiltro = "UPPER(nombre) ASC";
+                    }else if (secuencia.contains("fecha")) {
+                        tipoFiltro = "UPPER(fecha) ASC";
+                    }else if (secuencia.contains("tipo")) {
+                        tipoFiltro = "UPPER(tipo) ASC";
+                    }else if (secuencia.contains("lugar")) {
+                        tipoFiltro = "UPPER(nombre) ASC";
+                    } else{
+                        tipoFiltro = "UPPER(nombre) ASC";
+                    }
+                    //Log.d("Filtro", secuencia);
+                    //Log.d("Filtro", tipoFiltro);
+                    this.listarLugares(tipoFiltro);
+                }
+            }
+
+        }
     }
 
     // Llamamos a nuevo lugar

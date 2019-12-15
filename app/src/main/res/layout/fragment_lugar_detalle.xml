@@ -128,16 +128,16 @@
                   android:layout_below="@+id/linearLayoutDetalleLugar"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabDetalleLugarAccion"
-                android:layout_width="match_parent"
+                style="@android:style/Widget.Material.ImageButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginEnd="325dp"
-                android:layout_marginBottom="10dp"
+                android:layout_gravity="right"
+                android:layout_marginTop="400dp"
+                android:layout_marginRight="5dp"
+                android:backgroundTint="#579BD6"
                 android:clickable="true"
-                android:src="@drawable/ic_lugar"
-                app:backgroundTint="#52B0EC"/>
+                android:id="@+id/fabDetalleLugarAccion"
+                app:rippleColor="#FFFFFF"/>
 
 
     </RelativeLayout>
