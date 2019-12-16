@@ -170,22 +170,15 @@ public class LugaresFragment extends Fragment {
                 // Analizamos los que nos puede llegar
                 String secuencia="";
                 String tipoFiltro;
+                // Concatenamos todo lo que tiene la cadena encontrada para buscar palabras clave
                 for(String v: voz){
                     secuencia += " " + v;
                 }
 
+                // A partir de aquí podemos crear el if todo lo complejo que queramos o irnos a otro fichero
+                // O métpdp
                 if (secuencia != null) {
-                    if (secuencia.contains("nombre")) {
-                        tipoFiltro = "UPPER(nombre) ASC";
-                    }else if (secuencia.contains("fecha")) {
-                        tipoFiltro = "UPPER(fecha) ASC";
-                    }else if (secuencia.contains("tipo")) {
-                        tipoFiltro = "UPPER(tipo) ASC";
-                    }else if (secuencia.contains("lugar")) {
-                        tipoFiltro = "UPPER(nombre) ASC";
-                    } else{
-                        tipoFiltro = "UPPER(nombre) ASC";
-                    }
+                    tipoFiltro = analizarFiltroVoz(secuencia);
                     //Log.d("Filtro", secuencia);
                     //Log.d("Filtro", tipoFiltro);
                     this.listarLugares(tipoFiltro);
@@ -193,6 +186,47 @@ public class LugaresFragment extends Fragment {
             }
 
         }
+    }
+
+    private String analizarFiltroVoz(String secuencia) {
+        String tipoFiltro;
+        // Nombre
+        if ((secuencia.contains("nombre")) &&
+                !((secuencia.contains("descendente")|| secuencia.contains("inverso")))){
+            tipoFiltro = "UPPER(nombre) ASC";
+        }else if ((secuencia.contains("nombre")) &&
+                ((secuencia.contains("descendente")|| secuencia.contains("inverso")))){
+
+            tipoFiltro = "UPPER(nombre) DESC";
+            // Fecha
+        }else if ((secuencia.contains("fecha"))  &&
+                !((secuencia.contains("descendente")|| secuencia.contains("inverso")))){
+            tipoFiltro = "UPPER(fecha) ASC";
+        }else if ((secuencia.contains("fecha")) &&
+                ((secuencia.contains("descendente") || secuencia.contains("inverso")))){
+            tipoFiltro = "UPPER(fecha) DESC";
+
+            // Tipo
+        }else if ((secuencia.contains("tipo"))  &&
+                !((secuencia.contains("descendente")|| secuencia.contains("inverso")))){
+            tipoFiltro = "UPPER(tipo) ASC";
+        }else if ((secuencia.contains("tipo")) &&
+                ((secuencia.contains("descendente") || secuencia.contains("inverso")))){
+            tipoFiltro = "UPPER(tipo) DESC";
+
+            // Lugar = nombre
+        }else if ((secuencia.contains("lugar"))  &&
+        !((secuencia.contains("descendente")|| secuencia.contains("inverso")))){
+            tipoFiltro = "UPPER(nombre) ASC";
+        }else if ((secuencia.contains("lugar")) &&
+                ((secuencia.contains("descendente")|| secuencia.contains("inverso")))){
+            tipoFiltro = "UPPER(nombre) DESC";
+
+            // Por defecto
+        } else{
+            tipoFiltro = "UPPER(nombre) ASC";
+        }
+        return tipoFiltro;
     }
 
     // Llamamos a nuevo lugar

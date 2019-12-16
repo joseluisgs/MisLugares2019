@@ -1,5 +1,6 @@
 package com.example.mislugares.UI.lugares;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -602,15 +603,14 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     private void iniciarMapa(){
         // Para Obtener el mapa dentro de un Fragment
         mPosicion = LocationServices.getFusedLocationProviderClient(getActivity());
-        FragmentManager fm = getActivity().getSupportFragmentManager();/// getChildFragmentManager();
+        supportMapFragment = SupportMapFragment.newInstance();
+        FragmentManager fm =  getChildFragmentManager();/// getChildFragmentManager();
         supportMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.mMap);
         if (supportMapFragment == null) {
             supportMapFragment = SupportMapFragment.newInstance();
             fm.beginTransaction().replace(R.id.mMap, supportMapFragment).commit();
         }
         supportMapFragment.getMapAsync(this);
-
-
     }
 
     /**
@@ -782,5 +782,6 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
             //                Toast.LENGTH_SHORT).show();
             return false;
         }
+
 
 }
