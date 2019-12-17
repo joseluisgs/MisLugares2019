@@ -16,3 +16,4 @@ Es importante que gereneréis bien la clave de la API de Google Maps
 10/12/2019: Mapas y GPS 
 12/12/2019: Inicio de la base de datos y CRUD
 15/12/2019: Control por voz para seleccionar
+17/12/2019: Liberación del código e inicio de pruebas y comentarios
