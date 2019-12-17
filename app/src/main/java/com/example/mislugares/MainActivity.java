@@ -194,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
             //aqui no llega por que controla el null arriba
             //Log.e("ATRAS", "Error al hacer backpressed");
+            //
         }
     }
 
