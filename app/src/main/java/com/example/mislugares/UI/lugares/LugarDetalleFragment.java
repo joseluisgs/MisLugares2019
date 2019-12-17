@@ -277,6 +277,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     private void modoActualizar() {
         mostrarDatosLugar();
         iniciarSpiner();
+
         fabAccion.setImageResource(R.drawable.ic_actualizar);
         fabAccion.setBackgroundTintList(ColorStateList.valueOf(Color
                 .parseColor("#6699ff")));
@@ -294,6 +295,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     // Modo visualizar
     private void modoVisualizar() {
         desactivarComponentesIU();
+        ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_compartir_lugar).setVisible(true);
         mostrarDatosLugar();
         iniciarSpiner(); // Esto lo quietaré
         this.fabAccion.hide();
@@ -307,8 +309,10 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
         // Muestro los elementos de menú que quiero en este fragment
         // Menú
-        ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_compartir_lugar).setVisible(true);
         ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_atras).setVisible(true);
+        if(modo==VISUALIZAR){
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_compartir_lugar).setVisible(true);
+        }
 
         //Para ocultar el acceso al menú lateral
         //Se hace un getActivity haciendole un casting a MainActivity
@@ -603,7 +607,6 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     private void iniciarMapa(){
         // Para Obtener el mapa dentro de un Fragment
         mPosicion = LocationServices.getFusedLocationProviderClient(getActivity());
-        supportMapFragment = SupportMapFragment.newInstance();
         FragmentManager fm =  getChildFragmentManager();/// getChildFragmentManager();
         supportMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.mMap);
         if (supportMapFragment == null) {
