@@ -6,13 +6,14 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
-import com.example.mislugares.MainActivity;
 import com.example.mislugares.Modelos.Lugar;
 
-import java.io.File;
 import java.util.ArrayList;
 
+
+/**
+ * Controlador de de Lugares
+ */
 public class ControladorLugares {
 
     // Hacemos un Singleton
@@ -20,12 +21,18 @@ public class ControladorLugares {
     private static Context context;
 
 
-    private ControladorLugares(){
+    private ControladorLugares() {
 
     }
 
+    /**
+     * Constructor mediante isntancia Singleton
+     *
+     * @param contexto Coontexto de la palicación
+     * @return instancia de Controlador
+     */
     public static ControladorLugares getControlador(Context contexto) {
-        if (instancia == null){
+        if (instancia == null) {
             instancia = new ControladorLugares();
         }
         //else{
@@ -35,8 +42,12 @@ public class ControladorLugares {
         return instancia;
     }
 
-    // Lista todos los lugares...
-    //Filtro sería el order
+    /**
+     * Lista todos los lugares almacenados en el sistema de almacenamiento
+     *
+     * @param filtro Filtro de ordenación
+     * @return lista de lugares
+     */
     public ArrayList<Lugar> listarLugares(String filtro) {
         // Abrimos la BD en Modo Lectura
         ArrayList<Lugar> lista = new ArrayList<Lugar>();
@@ -79,14 +90,20 @@ public class ControladorLugares {
     }
     // Manejar un CRUD
     // https://parzibyte.me/blog/2019/02/04/tutorial-sqlite-android-crud-create-read-update-delete/
-    // Métodp para insertar un lugar
-    public boolean insertarLugar(Lugar lugar){
+
+    /**
+     * Inserta un lugar en el sistema de almacenamiento
+     *
+     * @param lugar Lugar a insertar
+     * @return verdadero si insertado
+     */
+    public boolean insertarLugar(Lugar lugar) {
         // se insertan sin problemas porque lugares es clave primaria, si ya están no hace nada
         // Abrimos la BD en modo escritura
         ControladorBD bdLugares = new ControladorBD(context, ControladorBD.db_lugares, null, 1);
         SQLiteDatabase bd = bdLugares.getWritableDatabase();
         boolean sal = false;
-        try{
+        try {
             //Cargamos los parámetros
             ContentValues valores = new ContentValues();
             valores.put("nombre", lugar.getNombre());
@@ -98,9 +115,9 @@ public class ControladorLugares {
             // insertamos en su tabla, en long tenemos el id más alto creado
             long res = bd.insert("Lugares", null, valores);
             sal = true;
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             Log.d("Lugares", "Error al insertar un nuevo lugar " + ex.getMessage());
-        }finally {
+        } finally {
             bd.close();
             bdLugares.close();
             return sal;
@@ -108,13 +125,18 @@ public class ControladorLugares {
 
     }
 
-    // Elimina un lugar. Podría hacerlo pasandole el objeto lugar
-    public boolean eliminarLugar(Lugar lugar){
+    /**
+     * Elimina un lugar del sistema de almacenamiento
+     *
+     * @param lugar Lugar a eliminar
+     * @return número de lugares eliminados.
+     */
+    public boolean eliminarLugar(Lugar lugar) {
         // Abrimos la BD en modo escritura
         ControladorBD bdLugares = new ControladorBD(context, ControladorBD.db_lugares, null, 1);
         SQLiteDatabase bd = bdLugares.getWritableDatabase();
         boolean sal = false;
-        try{
+        try {
 
             // Creamos el where
             String where = "id = ?";
@@ -124,9 +146,9 @@ public class ControladorLugares {
             // Eliminamos. En res tenemos el numero de filas eliminadas por si queremos tenerlo en cuenta
             int res = bd.delete("Lugares", where, args);
             sal = true;
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             Log.d("Lugares", "Error al eliminar este lugar " + ex.getMessage());
-        }finally {
+        } finally {
             bd.close();
             bdLugares.close();
             return sal;
@@ -134,13 +156,18 @@ public class ControladorLugares {
 
     }
 
-    // Actualiza un lugar
-    public boolean actualizarLugar(Lugar lugar){
+    /**
+     * Actualiza un lugar en el sistema de almacenamiento
+     *
+     * @param lugar Lugar a actualizar
+     * @return número de lugares actualizados
+     */
+    public boolean actualizarLugar(Lugar lugar) {
         // Abrimos la BD en modo escritura
         ControladorBD bdLugares = new ControladorBD(context, ControladorBD.db_lugares, null, 1);
         SQLiteDatabase bd = bdLugares.getWritableDatabase();
         boolean sal = false;
-        try{
+        try {
             // Cargamos los valores
             ContentValues valores = new ContentValues();
             valores.put("nombre", lugar.getNombre());
@@ -156,11 +183,11 @@ public class ControladorLugares {
             String[] args = {String.valueOf(lugar.getId())};
             // En el fondo hemos hecho where id = lugar.id
             // Actualizamos. En res tenemos el numero de filas actualizadas por si queremos tenerlo en cuenta
-            int res = bd.update("Lugares", valores,where, args);
+            int res = bd.update("Lugares", valores, where, args);
             sal = true;
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             Log.d("Lugares", "Error al actualizar este lugar " + ex.getMessage());
-        }finally {
+        } finally {
             bd.close();
             bdLugares.close();
             return sal;

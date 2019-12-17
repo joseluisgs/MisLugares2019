@@ -2,7 +2,9 @@ package com.example.mislugares.Modelos;
 
 import java.io.Serializable;
 
-// Implementa el objeto noticia
+/**
+ * Clase Noticia para RSS
+ */
 public class Noticia implements Serializable {
 
         private String titulo;
@@ -15,7 +17,16 @@ public class Noticia implements Serializable {
         public Noticia() {
         }
 
-        public Noticia(String titulo, String link, String descripcion, String contenido, String fecha,
+    /**
+     * Constructor de la clase Noticias
+     * @param titulo Titulo de la noticia
+     * @param link Enlace a la noticia
+     * @param descripcion Descripción de la noticia
+     * @param contenido Contenido de la noticia
+     * @param fecha Fecha de la noticia
+     * @param imagen Imagen de la noticia
+     */
+    public Noticia(String titulo, String link, String descripcion, String contenido, String fecha,
                        String imagen) {
             this.titulo = titulo;
             this.link = link;
@@ -24,6 +35,7 @@ public class Noticia implements Serializable {
             this.fecha = fecha;
             this.imagen = imagen;
         }
+
 
         public String getTitulo() {
             return titulo;
