@@ -1,18 +1,15 @@
 package com.example.mislugares.UI.lugares;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.RectF;
+import android.content.Intent;
+import android.graphics.*;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -22,7 +19,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.example.mislugares.Controladores.ControladorLugares;
 import com.example.mislugares.MainActivity;
 import com.example.mislugares.Modelos.Lugar;
@@ -30,14 +26,22 @@ import com.example.mislugares.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
+import static android.app.Activity.RESULT_OK;
+
+/**
+ * Clase para manejo de los fragemnt
+ */
 public class LugaresFragment extends Fragment {
 
+    // Constantes
     private static final int INSERTAR = 1;
     private static final int ELIMINAR = 2;
     private static final int ACTUALIZAR = 3;
+    private static final int VOZ = 10;
 
-    private ArrayList<Lugar>lugares =new ArrayList<>();
+    private ArrayList<Lugar> lugares = new ArrayList<>();
     private RecyclerView rv;
     private LugaresListAdapter ad;
 
@@ -51,7 +55,7 @@ public class LugaresFragment extends Fragment {
     // Valores del spinner
     private Spinner spinnerFiltro;
     private String[] listaFiltro =
-            {"Filtros", "Ordenar por nombre", "Ordenar por fecha","Ordenar por tipo"};
+            {"Filtros", "Ordenar por nombre", "Ordenar por fecha", "Ordenar por tipo"};
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -77,7 +81,7 @@ public class LugaresFragment extends Fragment {
         gestionSpinner();
 
         // Mostramos las vistas de listas y adaptador asociado
-        rv = (RecyclerView) getView().findViewById(R.id.recyclerLugares);
+        rv = getView().findViewById(R.id.recyclerLugares);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
@@ -87,6 +91,9 @@ public class LugaresFragment extends Fragment {
         actualizarInterfaz();
     }
 
+    /**
+     * Actualiza la Interfaz
+     */
     private void actualizarInterfaz() {
         // Oculto lo que no me interesa
         ((MainActivity) getActivity()).ocultarElementosIU();
@@ -97,27 +104,39 @@ public class LugaresFragment extends Fragment {
 
     }
 
-    // Iniciamos los componentes
-    private void iniciarComponentesIU(){
-        fabNuevo =(FloatingActionButton)getView().findViewById(R.id.fabLugaresNuevo);
-        fabVoz = (FloatingActionButton)getView().findViewById(R.id.fabLugaresVoz);
+    /**
+     * Iniciamos los componentes de la UI
+     */
+    private void iniciarComponentesIU() {
+        fabNuevo = getView().findViewById(R.id.fabLugaresNuevo);
+        fabVoz = getView().findViewById(R.id.fabLugaresVoz);
     }
 
-    // iniciamos los eventos de la IU
-    private void iniciarEventosIU(){
+    /**
+     * Iniciamos los Eventos UI
+     */
+    private void iniciarEventosIU() {
         // Enviamos el email
         fabNuevo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-               nuevoLugar();
+                nuevoLugar();
+            }
+        });
+        fabVoz.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controlVoz();
             }
         });
 
 
     }
 
-    // Evento del gesto Swipe hacia abajo
+    /**
+     * EVentos de Swipe
+     */
     private void iniciarSwipeRecarga() {
-        swipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.swipeRefreshLayoutLugares);
+        swipeRefreshLayout = getView().findViewById(R.id.swipeRefreshLayoutLugares);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -133,8 +152,110 @@ public class LugaresFragment extends Fragment {
         });
     }
 
-    // Llamamos a nuevo lugar
-    private void nuevoLugar(){
+    /**
+     * Procedimiento del control por voz
+     */
+    private void controlVoz() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        //reconoce en el idioma del telefono
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "¿Cómo quieres ordenar la lista?");
+        try {
+            startActivityForResult(intent, VOZ);
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * Activity Result de control por voz
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == MainActivity.RESULT_CANCELED) {
+            return;
+        }
+
+
+        if (requestCode == VOZ) {
+            if (resultCode == RESULT_OK && data != null) {
+                ArrayList<String> voz = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                // Analizamos los que nos puede llegar
+                String secuencia = "";
+                String tipoFiltro;
+                // Concatenamos todo lo que tiene la cadena encontrada para buscar palabras clave
+                for (String v : voz) {
+                    secuencia += " " + v;
+                }
+
+                // A partir de aquí podemos crear el if todo lo complejo que queramos o irnos a otro fichero
+                // O métpdp
+                if (secuencia != null) {
+                    tipoFiltro = analizarFiltroVoz(secuencia);
+                    //Log.d("Filtro", secuencia);
+                    //Log.d("Filtro", tipoFiltro);
+                    this.listarLugares(tipoFiltro);
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Analiza el resultado de procesar la voz
+     *
+     * @param secuencia Sencuencia de entrada
+     * @return filtro de salida
+     */
+    private String analizarFiltroVoz(String secuencia) {
+        String tipoFiltro;
+        // Nombre
+        if ((secuencia.contains("nombre")) &&
+                !((secuencia.contains("descendente") || secuencia.contains("inverso")))) {
+            tipoFiltro = "UPPER(nombre) ASC";
+        } else if ((secuencia.contains("nombre")) &&
+                ((secuencia.contains("descendente") || secuencia.contains("inverso")))) {
+
+            tipoFiltro = "UPPER(nombre) DESC";
+            // Fecha
+        } else if ((secuencia.contains("fecha")) &&
+                !((secuencia.contains("descendente") || secuencia.contains("inverso")))) {
+            tipoFiltro = "UPPER(fecha) ASC";
+        } else if ((secuencia.contains("fecha")) &&
+                ((secuencia.contains("descendente") || secuencia.contains("inverso")))) {
+            tipoFiltro = "UPPER(fecha) DESC";
+
+            // Tipo
+        } else if ((secuencia.contains("tipo")) &&
+                !((secuencia.contains("descendente") || secuencia.contains("inverso")))) {
+            tipoFiltro = "UPPER(tipo) ASC";
+        } else if ((secuencia.contains("tipo")) &&
+                ((secuencia.contains("descendente") || secuencia.contains("inverso")))) {
+            tipoFiltro = "UPPER(tipo) DESC";
+
+            // Lugar = nombre
+        } else if ((secuencia.contains("lugar")) &&
+                !((secuencia.contains("descendente") || secuencia.contains("inverso")))) {
+            tipoFiltro = "UPPER(nombre) ASC";
+        } else if ((secuencia.contains("lugar")) &&
+                ((secuencia.contains("descendente") || secuencia.contains("inverso")))) {
+            tipoFiltro = "UPPER(nombre) DESC";
+
+            // Por defecto
+        } else {
+            tipoFiltro = "UPPER(nombre) ASC";
+        }
+        return tipoFiltro;
+    }
+
+    /**
+     * Añade un nuervo lugar
+     */
+    private void nuevoLugar() {
         LugarDetalleFragment detalle = new LugarDetalleFragment(INSERTAR);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.nav_host_fragment, detalle);
@@ -148,11 +269,14 @@ public class LugaresFragment extends Fragment {
     }
 
 
-     //Gestionamos el filtro a través de un spinner. En función de la posición del array
-     //de strings que componen el adaptador del filtro, mandamos al método de consultar
-     //un filtro u otro (que concatenamos a lla consulta del listado
-     private void gestionSpinner() {
-        this.spinnerFiltro = (Spinner) getView().findViewById(R.id.spinnerLugaresFiltro);
+    /**
+     * Gestión de Spinner
+     */
+    //Gestionamos el filtro a través de un spinner. En función de la posición del array
+    //de strings que componen el adaptador del filtro, mandamos al método de consultar
+    //un filtro u otro (que concatenamos a lla consulta del listado
+    private void gestionSpinner() {
+        this.spinnerFiltro = getView().findViewById(R.id.spinnerLugaresFiltro);
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, listaFiltro);
         spinnerFiltro.setAdapter(dataAdapter);
         this.spinnerFiltro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -161,16 +285,16 @@ public class LugaresFragment extends Fragment {
                 String tipoFiltro = "";
                 switch (spinnerFiltro.getSelectedItemPosition()) {
                     case 1:
-                        tipoFiltro = "nombre ASC";
+                        tipoFiltro = "UPPER(nombre) ASC";
                         break;
                     case 2:
-                        tipoFiltro = "nombre ASC";
+                        tipoFiltro = "DATE(fecha) ASC";
                         break;
                     case 3:
-                        tipoFiltro = "fecha ASC";
+                        tipoFiltro = "UPPER(tipo) ASC";
                         break;
                     case 4:
-                        tipoFiltro = "tipo ASC";
+                        tipoFiltro = "nombre ASC";
                         break;
                     default:
                         break;
@@ -188,8 +312,9 @@ public class LugaresFragment extends Fragment {
     }
 
 
-
-    // Swipe horizontal
+    /**
+     * Swipe Horizontal
+     */
     private void iniciarSwipeHorizontal() {
         // Eventos pata procesar los eventos de swipe, en nuestro caso izquierda y derecha
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0,
@@ -201,6 +326,7 @@ public class LugaresFragment extends Fragment {
                                   RecyclerView.ViewHolder target) {
                 return false;
             }
+
             // Analizamos el evento según la dirección
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
@@ -246,27 +372,58 @@ public class LugaresFragment extends Fragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(rv);
     }
-    // Es que vamos de derecha a izquierda
+
+    /**
+     * Pulsar Botón derecho
+     *
+     * @param c
+     * @param dX
+     * @param itemView
+     */
     private void botonDerecho(Canvas c, float dX, View itemView) {
         // Pintamos de rojo y ponemos el icono
+        Bitmap icon;
+        float height = (float) itemView.getBottom() - (float) itemView.getTop();
+        float width = height / 3;
         p.setColor(Color.RED);
         RectF background = new RectF((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom());
         c.drawRect(background, p);
+        icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_eliminar_sweep);
+        RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width, (float) itemView.getTop() + width, (float) itemView.getRight() - width, (float) itemView.getBottom() - width);
+        c.drawBitmap(icon, null, icon_dest, p);
     }
-    // Pintamos un botón izquierdo en la posicón del color que se indica
+
+    /**
+     * Pulsar Botón Izquierdo
+     *
+     * @param c
+     * @param dX
+     * @param itemView
+     */
     private void botonIzquierdo(Canvas c, float dX, View itemView) {
         // Pintamos de azul y ponemos el icono
+        Bitmap icon;
+        float height = (float) itemView.getBottom() - (float) itemView.getTop();
+        float width = height / 3;
         p.setColor(Color.BLUE);
         RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom());
         c.drawRect(background, p);
+        icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_detalles);
+        RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float) itemView.getTop() + width, (float) itemView.getLeft() + 2 * width, (float) itemView.getBottom() - width);
+        c.drawBitmap(icon, null, icon_dest, p);
+
     }
 
-    // Actualizar elemento de la lista
-    private void actualizarElemento(int position){
+    /**
+     * Actualizar un elemento
+     *
+     * @param position
+     */
+    private void actualizarElemento(int position) {
         Lugar lugar = lugares.get(position);
         FragmentManager fm = getFragmentManager();
         // Lo abrimos en modo actualizar
-        LugarDetalleFragment detalle = new LugarDetalleFragment(lugar, ACTUALIZAR);;
+        LugarDetalleFragment detalle = new LugarDetalleFragment(lugar, ACTUALIZAR);
         // inicamos la transición
         FragmentTransaction transaction;
         transaction = fm.beginTransaction();
@@ -283,7 +440,11 @@ public class LugaresFragment extends Fragment {
 
     }
 
-    // Borra un elemento de la lista
+    /**
+     * Borrar un elemento
+     *
+     * @param position
+     */
     private void borrarElemento(int position) {
         Lugar lugar = lugares.get(position);
         FragmentManager fm = getFragmentManager();
@@ -302,7 +463,11 @@ public class LugaresFragment extends Fragment {
 
     }
 
-     //Consultamos el listado de lugares, limpiando antes la lista
+    /**
+     * Consultamos los lugares en base a un filtro
+     *
+     * @param filtro
+     */
     private void listarLugares(String filtro) {
         lugares.clear();
         ControladorLugares c = ControladorLugares.getControlador(getContext());

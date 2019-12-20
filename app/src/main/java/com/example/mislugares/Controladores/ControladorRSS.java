@@ -1,57 +1,65 @@
 package com.example.mislugares.Controladores;
 
 import android.util.Log;
-
 import com.example.mislugares.Modelos.Noticia;
-
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.util.ArrayList;
 
+/**
+ * Controlador de Noticias RSS
+ */
 public class ControladorRSS {
-    private ArrayList<Noticia> noticias;
 
+    // Arrays list de la clase noticias
+    private ArrayList<Noticia> noticias;
+    // URI del RSS
     private static String uri;
 
     // Hacemos un Singleton
     private static ControladorRSS instancia;
 
 
-    private ControladorRSS(String direccion){
+    private ControladorRSS(String direccion) {
         this.noticias = new ArrayList<>();
         uri = direccion;
     }
 
+    /**
+     * Instancia del controlador RSS
+     *
+     * @param direccion Dirección del servicio RSS
+     * @return Instancia del controlador
+     */
     public static ControladorRSS getControlador(String direccion) {
-        if (instancia == null){
+        if (instancia == null) {
             instancia = new ControladorRSS(direccion);
         }
         //else{
 
-           // Log.i("RSS", "Usando el controlador RSS existente con URI: "+ uri);
+        // Log.i("RSS", "Usando el controlador RSS existente con URI: "+ uri);
         //}
         uri = direccion;
         return instancia;
     }
 
-    // Devolvemos el array de las noticias
+    /**
+     * Devuelve el arrray list de objetos noticias encontrados
+     *
+     * @return Lista de Noticias
+     */
     public ArrayList<Noticia> getNoticias() {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         ArrayList<Noticia> noticias = new ArrayList();
 
         try {
-
+            // Fisltramos por elementos del RSS
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.parse(uri);
             NodeList items = document.getElementsByTagName("item");

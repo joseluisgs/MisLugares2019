@@ -29,28 +29,27 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/tvItemLugarNombre"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:lines="2"
-                android:textColor="#000"
-                android:textSize="18sp" />
+                    android:id="@+id/tvItemLugarNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="20dp"
+                    android:textStyle="bold"/>
 
+            <TextView
+                    android:id="@+id/tvItemLugarFecha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:textColor="#555"
+
+            />
             <TextView
                 android:id="@+id/tvItemLugarTipo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:textColor="#555"
-
-                />
-
-            <TextView
-                android:id="@+id/tvItemLugarFecha"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="5dp"
                 android:textColor="#555"
 
                 />

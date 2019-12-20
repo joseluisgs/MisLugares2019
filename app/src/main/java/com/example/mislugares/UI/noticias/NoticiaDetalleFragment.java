@@ -3,24 +3,24 @@ package com.example.mislugares.UI.noticias;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import com.example.mislugares.MainActivity;
 import com.example.mislugares.Modelos.Noticia;
 import com.example.mislugares.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
-// Implementa la vista de una noticia
+/**
+ * Fragmen de Noticia
+ */
 public class NoticiaDetalleFragment extends Fragment {
 
     // El Objeto
@@ -38,7 +38,7 @@ public class NoticiaDetalleFragment extends Fragment {
 
 
     // Constructores
-    public NoticiaDetalleFragment(Noticia noticia){
+    public NoticiaDetalleFragment(Noticia noticia) {
         this.noticia = noticia;
         noticiaActual = noticia;
     }
@@ -76,16 +76,20 @@ public class NoticiaDetalleFragment extends Fragment {
 
     }
 
-    // Inicia los componentes IU
+    /**
+     * Inicia la componentes de la IU
+     */
     private void iniciarComponentesIU() {
-        tvDetalleTitulo = (TextView)getView().findViewById(R.id.tvNoticiaDetalleTitular);
-        wvDetalleContenido=(WebView)getView().findViewById(R.id.wvNoticiaDetalleContenido);
-        ivDetalleImagen=(ImageView) getView().findViewById(R.id.ivNoticiaDetalleImagen);
-        fabDetallesIr =(FloatingActionButton)getView().findViewById(R.id.fabNoticiaDetalleIr);
+        tvDetalleTitulo = getView().findViewById(R.id.tvNoticiaDetalleTitular);
+        wvDetalleContenido = getView().findViewById(R.id.wvNoticiaDetalleContenido);
+        ivDetalleImagen = getView().findViewById(R.id.ivNoticiaDetalleImagen);
+        fabDetallesIr = getView().findViewById(R.id.fabNoticiaDetalleIr);
     }
 
-    // iniciamos los eventos de la IU
-    private void iniciarEventosIU(){
+    /**
+     * Inicia los Eventos de la IU
+     */
+    private void iniciarEventosIU() {
         // Enviamos el email
         fabDetallesIr.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -96,37 +100,45 @@ public class NoticiaDetalleFragment extends Fragment {
 
     }
 
-    // Procesamos la noticia
-    private void procesarNoticia(){
+    /**
+     * Procesamos una noticia
+     */
+    private void procesarNoticia() {
         tvDetalleTitulo.setText(this.noticia.getTitulo());
-        wvDetalleContenido.loadData(this.noticia.getContenido(),"text/html",null);
+        wvDetalleContenido.loadData(this.noticia.getContenido(), "text/html", null);
         Picasso.get().load(this.noticia.getImagen()).into(this.ivDetalleImagen);
 
     }
 
 
-    // Llama a al navegador
-    private void abrirEnlaceNavegador(String enlance){
+    /**
+     * Llamamos al navegador con un enlace
+     *
+     * @param enlance
+     */
+    private void abrirEnlaceNavegador(String enlance) {
         Uri uri = Uri.parse(enlance);
-        Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
 
 
-    // Actualizamos la interfaz y los menús que heredamos según nos convenga
-    private void actualizarInterfaz(){
+    /**
+     * ACtualizamos la interfaz de usuario
+     */
+    private void actualizarInterfaz() {
         // Oculto lo que no me interesa
         ((MainActivity) getActivity()).ocultarElementosIU();
 
         // Muestro los elementos de menú que quiero en este fragment
         // Menú
-        ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_compartir).setVisible(true);
+        ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_compartir_noticia).setVisible(true);
         ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_atras).setVisible(true);
 
         //Para ocultar el acceso al menú lateral
         //Se hace un getActivity haciendole un casting a MainActivity
-        ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((MainActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(false);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(false);
 
 
     }

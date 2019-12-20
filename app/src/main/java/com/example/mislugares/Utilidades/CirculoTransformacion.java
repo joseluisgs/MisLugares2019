@@ -1,29 +1,46 @@
 package com.example.mislugares.Utilidades;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-
+import android.graphics.*;
 import com.squareup.picasso.Transformation;
 
+/**
+ * Clase de trasformación para las imagen Picasso
+ */
 public class CirculoTransformacion implements Transformation {
 
     boolean mCircleSeparator = false;
     String color = "#ffffff";
 
+    /**
+     * Constructor
+     */
     public CirculoTransformacion() {
     }
 
+    /**
+     * Constructor con color
+     *
+     * @param color Color
+     */
     public CirculoTransformacion(String color) {
         this.color = color;
     }
 
+    /**
+     * Transformación
+     *
+     * @param circleSeparator Separador
+     */
     public CirculoTransformacion(boolean circleSeparator) {
         mCircleSeparator = circleSeparator;
     }
 
+    /**
+     * Transmormación
+     *
+     * @param source Fuernte
+     * @return Destino
+     */
     @Override
     public Bitmap transform(Bitmap source) {
         int size = Math.min(source.getWidth(), source.getHeight());
@@ -61,6 +78,11 @@ public class CirculoTransformacion implements Transformation {
         return bitmap;
     }
 
+    /**
+     * Key
+     *
+     * @return
+     */
     @Override
     public String key() {
         return "circle";

@@ -1,7 +1,10 @@
 package com.example.mislugares.Modelos;
 
+/**
+ * Clase Lugar
+ */
 public class Lugar {
-    private int id;
+    private long id;
     private String nombre;
     private String tipo;
     private String fecha;
@@ -9,7 +12,22 @@ public class Lugar {
     private float longitud;
     private String imagen;
 
-    public Lugar(int id, String nombre, String tipo, String fecha, float latitud, float longitud, String imagen){
+    public Lugar() {
+
+    }
+
+    /**
+     * Constructor de la clase Lugar
+     *
+     * @param id       Identificador, ID
+     * @param nombre   Nombre de Lugar
+     * @param tipo     Tipo de Lugar
+     * @param fecha    Fecha de Lugar
+     * @param latitud  Latitud del Lugar
+     * @param longitud Longitud de Lugar
+     * @param imagen   Imagen de Lugar
+     */
+    public Lugar(long id, String nombre, String tipo, String fecha, float latitud, float longitud, String imagen) {
         this.id = id;
         this.nombre = nombre;
         this.tipo = tipo;
@@ -19,11 +37,11 @@ public class Lugar {
         this.imagen = imagen;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

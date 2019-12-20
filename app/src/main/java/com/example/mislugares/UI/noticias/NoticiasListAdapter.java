@@ -6,11 +6,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.mislugares.Modelos.Noticia;
 import com.example.mislugares.R;
 import com.example.mislugares.Utilidades.CirculoTransformacion;
@@ -20,6 +18,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Adaptador de la Lista de Noticias
+ */
 public class NoticiasListAdapter extends RecyclerView.Adapter<NoticiasListAdapter.ViewHolder> {
 
     // Objeto con el modelo de datos (lista)
@@ -33,7 +34,13 @@ public class NoticiasListAdapter extends RecyclerView.Adapter<NoticiasListAdapte
         this.fm = fm;
     }
 
-    // Asociamos la vista
+    /**
+     * Asociamos la vista
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
@@ -43,17 +50,22 @@ public class NoticiasListAdapter extends RecyclerView.Adapter<NoticiasListAdapte
         return viewHolder;
     }
 
-    // Procesamos las noticias y la metemos en un holder, que es que gestiona los elementos individuales
+    /**
+     * Procesamos las noticias y las metemos en un Holder
+     *
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Noticia noticia = listaNoticias.get(position);
         String titular = listaNoticias.get(position).getTitulo();
 
         //Controlamos la longitud para que si llega a una cantidad de caracteres, recortarlo
-        if (titular.length() >= 30){
-            titular = titular.substring(0,30);
-            holder.tvTitular.setText(titular+"...");
-        }else{
+        if (titular.length() >= 30) {
+            titular = titular.substring(0, 30);
+            holder.tvTitular.setText(titular + "...");
+        } else {
             holder.tvTitular.setText(titular);
         }
 
@@ -63,7 +75,7 @@ public class NoticiasListAdapter extends RecyclerView.Adapter<NoticiasListAdapte
         String fechaFormato = formatoFecha.format(date);
         holder.tvFecha.setText(fechaFormato);
         //Sacamos la hora
-        holder.tvHora.setText(listaNoticias.get(position).getFecha().substring(16,25));
+        holder.tvHora.setText(listaNoticias.get(position).getFecha().substring(16, 25));
         //Usando Picasso para poder obtener las fotos y redondearlas
         Picasso.get().load(listaNoticias.get(position).getImagen())
                 //Instanciamos un objeto de la clase (creada más abajo) para redondear la imagen
@@ -72,6 +84,7 @@ public class NoticiasListAdapter extends RecyclerView.Adapter<NoticiasListAdapte
                 .into(holder.ivNoticia);
 
 
+        // Aquí programamos el evento clik que hacemos en un objeto de la lista
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +103,7 @@ public class NoticiasListAdapter extends RecyclerView.Adapter<NoticiasListAdapte
                 transaction.setCustomAnimations(R.anim.animacion_fragment1,
                         R.anim.animacion_fragment1, R.anim.animacion_fragment2, R.anim.animacion_fragment1);
                 //Llamamos al replace
-                transaction.replace(R.id.nav_host_fragment,detalle);
+                transaction.replace(R.id.nav_host_fragment, detalle);
                 transaction.addToBackStack(null);
                 transaction.commit();
 
@@ -99,7 +112,11 @@ public class NoticiasListAdapter extends RecyclerView.Adapter<NoticiasListAdapte
 
     }
 
-    // Metodo para borrar el elemento de la lista
+    /**
+     * Elimina un item de la lista
+     *
+     * @param position
+     */
     public void removeItem(int position) {
         listaNoticias.remove(position);
         notifyItemRemoved(position);
@@ -107,22 +124,32 @@ public class NoticiasListAdapter extends RecyclerView.Adapter<NoticiasListAdapte
 
     }
 
-    // Método para recuperar el elemento de la lista
+    /**
+     * Recupera un Item de la lista
+     *
+     * @param item
+     * @param position
+     */
     public void restoreItem(Noticia item, int position) {
         listaNoticias.add(position, item);
         notifyItemInserted(position);
         notifyItemRangeChanged(position, listaNoticias.size());
     }
 
-    // Metodo para obtener el numero de elementos de la lista
+    /**
+     * Devuelve el número de items de la lista
+     *
+     * @return
+     */
     @Override
     public int getItemCount() {
         return listaNoticias.size();
     }
 
 
-    //Esta clase Holder representa a los elementos que vamos a manejar en cada item
-    //Sus atributos coinciden con la clase que simboliza cada item
+    /**
+     * Holder que encapsula los objetos a mostrar en la lista
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView ivNoticia;
@@ -131,14 +158,18 @@ public class NoticiasListAdapter extends RecyclerView.Adapter<NoticiasListAdapte
         public TextView tvHora;
         public RelativeLayout relativeLayout;
 
-        // Casamos con cada elemento de la interfaz
+        /**
+         * Asocia cada objeto a las componentes de la interfaz
+         *
+         * @param itemView
+         */
         public ViewHolder(View itemView) {
             super(itemView);
-            this.ivNoticia = (ImageView) itemView.findViewById(R.id.ivItemImagenNoticia);
-            this.tvTitular = (TextView) itemView.findViewById(R.id.tvItemTitularNoticia);
-            this.tvFecha = (TextView) itemView.findViewById(R.id.tvItemFechaNoticia);
-            this.tvHora = (TextView)itemView.findViewById(R.id.tvItemHoraNoticia);
-            relativeLayout = (RelativeLayout) itemView.findViewById(R.id.relativeItemNoticia);
+            this.ivNoticia = itemView.findViewById(R.id.ivItemImagenNoticia);
+            this.tvTitular = itemView.findViewById(R.id.tvItemTitularNoticia);
+            this.tvFecha = itemView.findViewById(R.id.tvItemFechaNoticia);
+            this.tvHora = itemView.findViewById(R.id.tvItemHoraNoticia);
+            relativeLayout = itemView.findViewById(R.id.relativeItemNoticia);
 
         }
     }

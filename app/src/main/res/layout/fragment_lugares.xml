@@ -28,17 +28,17 @@
         app:srcCompat="@drawable/ic_nuevo" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabLugaresVoz"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="345dp"
-        android:layout_marginBottom="19dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:backgroundTint="#DC71EE"
-        app:srcCompat="@drawable/ic_mic"/>
+            android:id="@+id/fabLugaresVoz"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="19dp"
+            android:layout_marginStart="9dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:backgroundTint="#DC71EE"
+            app:srcCompat="@drawable/ic_mic"/>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayoutLugares"
@@ -53,10 +53,10 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerLugares"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical" />
+                android:id="@+id/recyclerLugares"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical" android:background="#EEEDFC"/>
 
 
         <ProgressBar
