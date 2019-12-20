@@ -1,6 +1,5 @@
 package com.example.mislugares.UI.lugares;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -30,7 +29,6 @@ import com.example.mislugares.MainActivity;
 import com.example.mislugares.Modelos.Lugar;
 import com.example.mislugares.R;
 import com.example.mislugares.Utilidades.Utilidades;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.*;
@@ -46,8 +44,10 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.concurrent.Executor;
 
+/**
+ * Gestiona un lugar con mapas y camara
+ */
 public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener {
 
@@ -100,10 +100,6 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     private LatLng posicion;
 
 
-
-
-
-
     // Le pasamos el tipo de modo y objeto para activar o desactivar controles
     // Edición y Actualización --> Los componentes del fragment estarán activados
     // Visualización y Borrado --> Los componentes del fragment estarán desactivados
@@ -140,7 +136,6 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         super.onActivityCreated(savedInstanceState);
 
 
-
         // Obtenemos los elementos de la interfaz
         iniciarComponentesIU();
 
@@ -161,7 +156,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     }
 
-    // Enlazamos los elementos de la interfaz
+    /**
+     * Inicia los componentes de la IU
+     */
     private void iniciarComponentesIU() {
         // Tipo
         this.spinnerLugarDetalleTipo = getView().findViewById(R.id.spinnerLugarDetalleTipo);
@@ -185,7 +182,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     }
 
-    // iniciamos los eventos de la IU
+    /**
+     * Inicia los Eventos de la IU
+     */
     private void iniciarEventosIU() {
         // boton fecha
         btnFecha.setOnClickListener(new View.OnClickListener() {
@@ -211,8 +210,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     }
 
 
-    // Procesamos el modo de visualización según el modo
-    // Activando los componentes oporrunos
+    /**
+     * Procesamos los modos de visualización
+     */
     private void procesarModoVisualizacion() {
         switch (this.modo) {
             case VISUALIZAR:
@@ -233,8 +233,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     }
 
 
-
-    // Desactiva los componentes
+    /**
+     * Desactivamos componentes
+     */
     private void desactivarComponentesIU() {
         this.etNombre.setEnabled(false);
         this.tvFecha.setEnabled(false);
@@ -244,15 +245,17 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         this.btnCamara.hide();
     }
 
-    // Mostramos los datos del lugar
-    private void mostrarDatosLugar(){
+    /**
+     * Mostramos los datos de un lugar
+     */
+    private void mostrarDatosLugar() {
         // Datos
         this.etNombre.getEditText().setText(this.lugar.getNombre());
         this.tvFecha.setText(this.lugar.getFecha());
         this.etTipo.getEditText().setText(this.lugar.getTipo());
         // Procesamos la imagen proprocional
         Bitmap imagen = Utilidades.base64ToBitmap(lugar.getImagen());
-        float prop= PROPORCION / (float) imagen.getWidth();
+        float prop = PROPORCION / (float) imagen.getWidth();
         Bitmap imagenLugar = Bitmap.createScaledBitmap(imagen, PROPORCION, (int) (imagen.getHeight() * prop), false);
         this.ivLugar.setImageBitmap(imagenLugar);
         this.imagen = imagenLugar;
@@ -260,6 +263,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     }
 
+    /**
+     * Modo Insertar
+     */
     private void modoInsertar() {
         // Ponemos el spinner
         iniciarSpiner();
@@ -269,11 +275,13 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                 .parseColor("#52B0EC")));
 
         // Ponemos como foto, la foto por defecto
-        this.imagen = ((BitmapDrawable)this.ivLugar.getDrawable()).getBitmap();
+        this.imagen = ((BitmapDrawable) this.ivLugar.getDrawable()).getBitmap();
 
     }
 
-    // Actualiza los datos
+    /**
+     * Modo Actualizar
+     */
     private void modoActualizar() {
         mostrarDatosLugar();
         iniciarSpiner();
@@ -283,7 +291,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                 .parseColor("#6699ff")));
     }
 
-    // Elimina los datos
+    /**
+     * Modo eliminar
+     */
     private void modoEliminar() {
         desactivarComponentesIU();
         mostrarDatosLugar();
@@ -292,7 +302,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                 .parseColor("#FF3377")));
     }
 
-    // Modo visualizar
+    /**
+     * Modo visualizar
+     */
     private void modoVisualizar() {
         desactivarComponentesIU();
         ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_compartir_lugar).setVisible(true);
@@ -302,7 +314,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     }
 
-    // Actualizamos la interfaz y los menús que heredamos según nos convenga
+    /**
+     * Actualizamos la Interfaz
+     */
     private void actualizarInterfaz() {
         // Oculto lo que no me interesa
         ((MainActivity) getActivity()).ocultarElementosIU();
@@ -310,7 +324,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         // Muestro los elementos de menú que quiero en este fragment
         // Menú
         ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_atras).setVisible(true);
-        if(modo==VISUALIZAR){
+        if (modo == VISUALIZAR) {
             ((MainActivity) getActivity()).getMenu().findItem(R.id.menu_compartir_lugar).setVisible(true);
         }
 
@@ -321,36 +335,36 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     }
 
 
-     //Gestión del spinner. le pasamos como se va a mostrar el layout y la lista que va a recibir.
-     //Se trata de un proceso muy parecido al de construir un adaptador para un recyclerView
-     //solo que este ya nos lo "regala" Android
-    private void iniciarSpiner(){
-            // Leemos los datos del XML lo cogemos del XML Strings
-                ArrayAdapter<CharSequence> adapter =
+    //Gestión del spinner. le pasamos como se va a mostrar el layout y la lista que va a recibir.
+    //Se trata de un proceso muy parecido al de construir un adaptador para un recyclerView
+    //solo que este ya nos lo "regala" Android
+    private void iniciarSpiner() {
+        // Leemos los datos del XML lo cogemos del XML Strings
+        ArrayAdapter<CharSequence> adapter =
                 ArrayAdapter.createFromResource(getContext(),
                         R.array.tipos_lugares,
                         android.R.layout.simple_spinner_dropdown_item);
 
-            this.spinnerLugarDetalleTipo.setAdapter(adapter);
+        this.spinnerLugarDetalleTipo.setAdapter(adapter);
 
-            // Su listener
-            this.spinnerLugarDetalleTipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    //El valor escogido en el spinner se lo ponemos al TextInputLayout de Tipo
-                    etTipo.getEditText().setText(spinnerLugarDetalleTipo.getSelectedItem().toString());
-                }
+        // Su listener
+        this.spinnerLugarDetalleTipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //El valor escogido en el spinner se lo ponemos al TextInputLayout de Tipo
+                etTipo.getEditText().setText(spinnerLugarDetalleTipo.getSelectedItem().toString());
+            }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                    //Nada
-                }
-            });
-        }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //Nada
+            }
+        });
+    }
 
     // Escogemos la fecha
     private void escogerFecha() {
-         calendar = Calendar.getInstance();
+        calendar = Calendar.getInstance();
 
 
         //Abrimos el DataPickerDialog
@@ -364,7 +378,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         datePickerDialog.show();
     }
 
-    // Realiza una acción según el modo
+    /**
+     * Realiza una cción según el modo
+     */
     private void realizarAccion() {
         switch (modo) {
             case INSERTAR:
@@ -380,12 +396,14 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         }
     }
 
-    // Elimina un lugar
+    /**
+     * Eliminar un lugar
+     */
     private void eliminarLugar() {
         // Mostramos el dialogo de eliminar
         AlertDialog.Builder deleteDialog = new AlertDialog.Builder(getContext());
 
-        deleteDialog.setTitle("¿Estás seguro de querer eliminar el lugar: "+lugar.getNombre()+" ?");
+        deleteDialog.setTitle("¿Estás seguro de querer eliminar el lugar: " + lugar.getNombre() + " ?");
         String[] deleteDialogItems = {
                 "Sí",
                 "No"};
@@ -406,7 +424,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                                 }
                                 break;
                             case 1:
-                                Snackbar.make(getView(),"No se ha realizado ninguna acción",Snackbar.LENGTH_LONG).show();
+                                Snackbar.make(getView(), "No se ha realizado ninguna acción", Snackbar.LENGTH_LONG).show();
                                 break;
                         }
                     }
@@ -415,10 +433,12 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     }
 
-    // Inserta un lugar en la base de datos
+    /**
+     * Insertar un lugar
+     */
     private void insertarLugar() {
         // Comprbamos que todos los datos se han introducido
-        if(camposNoNulos()) {
+        if (camposNoNulos()) {
             // Cargamos los datos, lo hago poco a poco para ver que ha pasado
             lugar = new Lugar();
             lugar.setNombre(this.etNombre.getEditText().getText().toString());
@@ -441,11 +461,14 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     }
 
+    /**
+     * Actualizar un lugar
+     */
     private void actualizarLugar() {
         // Mostramos el dialogo de eliminar
         AlertDialog.Builder deleteDialog = new AlertDialog.Builder(getContext());
 
-        deleteDialog.setTitle("¿Estás seguro de querer actualizar el lugar: "+lugar.getNombre()+" ?");
+        deleteDialog.setTitle("¿Estás seguro de querer actualizar el lugar: " + lugar.getNombre() + " ?");
         String[] deleteDialogItems = {
                 "Sí",
                 "No"};
@@ -455,7 +478,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
-                                if(camposNoNulos()) {
+                                if (camposNoNulos()) {
                                     // No crear que machacamos el id
                                     lugar.setNombre(etNombre.getEditText().getText().toString());
                                     lugar.setFecha(tvFecha.getText().toString());
@@ -474,7 +497,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                                 }
                                 break;
                             case 1:
-                                Snackbar.make(getView(),"No se ha realizado ninguna acción",Snackbar.LENGTH_LONG).show();
+                                Snackbar.make(getView(), "No se ha realizado ninguna acción", Snackbar.LENGTH_LONG).show();
                                 break;
                         }
                     }
@@ -483,26 +506,34 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     }
 
-    // Para volver una vez insertado
-    // O bloqueamos la interfaz para no icializarlo
-    public void volver(){
+    /**
+     * Volvemos a atrás
+     */
+    private void volver() {
         getActivity().onBackPressed();
     }
 
-    public boolean camposNoNulos(){
+    /**
+     * Comprobamos que los campos no son nulos
+     *
+     * @return
+     */
+    public boolean camposNoNulos() {
         boolean sal = true;
-        if(TextUtils.isEmpty(this.etNombre.getEditText().getText().toString())) {
+        if (TextUtils.isEmpty(this.etNombre.getEditText().getText().toString())) {
             this.etNombre.setError("El nombre no puede ser vacío");
             sal = false;
         }
-        if(TextUtils.isEmpty(this.etTipo.getEditText().getText().toString())) {
+        if (TextUtils.isEmpty(this.etTipo.getEditText().getText().toString())) {
             this.etNombre.setError("El tipo no puede ser vacío");
             sal = false;
         }
         return sal;
     }
 
-    // Tomamos la foto y seleccionamos de la galeria
+    /**
+     * Tomamos una foto
+     */
     private void tomarFoto() {
         AlertDialog.Builder fotoDialogo = new AlertDialog.Builder(getContext());
         fotoDialogo.setTitle("Seleccionar Acción");
@@ -526,6 +557,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         fotoDialogo.show();
     }
 
+    /**
+     * Toma una foto de la cámara
+     */
     private void tomarFotoCamara() {
         // Si queremos hacer uso de fotos en aklta calidad
         // Primero miramos si complimos todo
@@ -544,8 +578,9 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     }
 
 
-
-    // Elige la foto de la galería
+    /**
+     * Elige una foto de la galería
+     */
     private void elegirFotoGaleria() {
         // Abrimos el itent de la galería
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
@@ -553,7 +588,13 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         startActivityForResult(galleryIntent, GALERIA);
     }
 
-    // Resultado del intent de Galería
+    /**
+     * Resultad de la Actividad de la foto
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -575,7 +616,6 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
                     // Asignamos la imagen
                     imagen = foto;
                     this.ivLugar.setImageBitmap(imagen);
-
 
 
                 } catch (IOException e) {
@@ -603,11 +643,13 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     }
 
-    // Método para iniciar el mapa indepoendientemente del modo
-    private void iniciarMapa(){
+    /**
+     * Inicia los elementos del mapa
+     */
+    private void iniciarMapa() {
         // Para Obtener el mapa dentro de un Fragment
         mPosicion = LocationServices.getFusedLocationProviderClient(getActivity());
-        FragmentManager fm =  getChildFragmentManager();/// getChildFragmentManager();
+        FragmentManager fm = getChildFragmentManager();/// getChildFragmentManager();
         supportMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.mMap);
         if (supportMapFragment == null) {
             supportMapFragment = SupportMapFragment.newInstance();
@@ -618,7 +660,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     /**
      * Voy a programar aquí por comodidad toda la lógica del mapa
-     *
+     * <p>
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
@@ -630,7 +672,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-       // Configuración del mapa por defecto para todos los modos
+        // Configuración del mapa por defecto para todos los modos
 
         mMap = googleMap;
         // Mapa híbrido, lo normal es usar el
@@ -669,8 +711,10 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
 
     }
 
-    // Comportamiento del mapa particular para insertar
-    private void mapaInsertar(){
+    /**
+     * Modo Mapa insertar
+     */
+    private void mapaInsertar() {
         // Configuramos el botón de localización
         mMap.setMyLocationEnabled(true);
         // Activo el evento del marcador
@@ -678,27 +722,31 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         obtenerPosicionActualMapa();
     }
 
-    // Comportamiento del mapa en modo visualizar y eliminar
-    private void mapaVisualizar(){
+    /**
+     * Modo Mapa Visualizar
+     */
+    private void mapaVisualizar() {
         // Vamos a dejar que nos deje ir a l lugar obteniendo la psoición actual
         //mMap.setMyLocationEnabled(true);
         // procesamos el mapa moviendo la camara allu
         posicion = new LatLng(lugar.getLatitud(), lugar.getLongitud());
         marcador = mMap.addMarker(new MarkerOptions()
-                        // Posición
-                        .position(posicion)
-                        // Título
-                        .title("Tu posición")
-                        // Subtitulo
-                        .snippet(lugar.getNombre())
-                        // Color o tipo d icono
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
-                );
+                // Posición
+                .position(posicion)
+                // Título
+                .title("Tu posición")
+                // Subtitulo
+                .snippet(lugar.getNombre())
+                // Color o tipo d icono
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
+        );
         mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion));
     }
 
-    // Comportamiento del mapa a actualizar
-    private void mapaActualizar(){
+    /**
+     * Modo Mapa actualizar
+     */
+    private void mapaActualizar() {
         // Vamos a dejar que nos deje ir a l lugar obteniendo la psoición actual
         mMap.setMyLocationEnabled(true);
         // Activamos eventos marcadores
@@ -718,38 +766,43 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion));
     }
 
+    /**
+     * Modo Mapa obtiene la posición actual
+     */
     private void obtenerPosicionActualMapa() {
         try {
-                // Lo lanzamos como tarea concurrente
-                Task<Location> local = mPosicion.getLastLocation();
-                local.addOnCompleteListener(getActivity(), new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        if (task.isSuccessful()) {
-                            // Actualizamos la última posición conocida
-                            localizacion = task.getResult();
-                            if(localizacion!=null) {
-                                posicion = new LatLng(localizacion.getLatitude(),
-                                        localizacion.getLongitude());
-                                // Añadimos un marcador especial para poder operar con esto
-                                mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion));
-                            }else{
-                                Snackbar.make(getView(),"No se ha encontrado su posoción actual",Snackbar.LENGTH_LONG).show();
-                            }
-
+            // Lo lanzamos como tarea concurrente
+            Task<Location> local = mPosicion.getLastLocation();
+            local.addOnCompleteListener(getActivity(), new OnCompleteListener<Location>() {
+                @Override
+                public void onComplete(@NonNull Task<Location> task) {
+                    if (task.isSuccessful()) {
+                        // Actualizamos la última posición conocida
+                        localizacion = task.getResult();
+                        if (localizacion != null) {
+                            posicion = new LatLng(localizacion.getLatitude(),
+                                    localizacion.getLongitude());
+                            // Añadimos un marcador especial para poder operar con esto
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(posicion));
                         } else {
-                            Log.d("GPS", "No se encuetra la última posición.");
-                            Log.e("GPS", "Exception: %s", task.getException());
+                            Snackbar.make(getView(), "No se ha encontrado su posoción actual", Snackbar.LENGTH_LONG).show();
                         }
+
+                    } else {
+                        Log.d("GPS", "No se encuetra la última posición.");
+                        Log.e("GPS", "Exception: %s", task.getException());
                     }
-                });
-        } catch (SecurityException e)  {
+                }
+            });
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }
 
 
-
+    /**
+     * Activa los eventos de marcadores
+     */
     private void activarEventosMarcdores() {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -777,14 +830,14 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         });
     }
 
-        @Override
-        public boolean onMarkerClick(Marker marker) {
-            // Si pulsas ayunatmiento, si muestro el toast si no nada
-            //String titulo = marker.getTitle();
-            //Toast.makeText(getContext(),"Estás en: " + marker.getPosition().latitude+","+marker.getPosition().longitude,
-            //                Toast.LENGTH_SHORT).show();
-            return false;
-        }
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        // Si pulsas ayunatmiento, si muestro el toast si no nada
+        //String titulo = marker.getTitle();
+        //Toast.makeText(getContext(),"Estás en: " + marker.getPosition().latitude+","+marker.getPosition().longitude,
+        //                Toast.LENGTH_SHORT).show();
+        return false;
+    }
 
 
 }

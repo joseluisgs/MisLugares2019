@@ -2,25 +2,24 @@ package com.example.mislugares.UI.lugares;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.mislugares.Modelos.Lugar;
 import com.example.mislugares.R;
 import com.example.mislugares.Utilidades.Utilidades;
 
 import java.util.ArrayList;
 
+/**
+ * Adaptador de la lista mis lugares
+ */
 public class LugaresListAdapter extends RecyclerView.Adapter<LugaresListAdapter.ViewHolder> {
 
     private static final int VISUALIZAR = 4;
@@ -73,10 +72,9 @@ public class LugaresListAdapter extends RecyclerView.Adapter<LugaresListAdapter.
         holder.tvItemLugarTipo.setText(lugar.getTipo());
 
 
-
-        // Detectamos el clic y abrimos el detalle en modo visualizar
-        // Aquñi se programa el evento clic sobre la fila
-        // Y en la vista proncipal los swipes
+        /**
+         * Importante evento de click
+         */
         holder.relativeLugar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,7 +83,11 @@ public class LugaresListAdapter extends RecyclerView.Adapter<LugaresListAdapter.
         });
     }
 
-    // Vemos el elemento que hemos pulsado
+    /**
+     * Ver un elemento
+     *
+     * @param position
+     */
     private void verElemento(int position) {
         // Esto es redindate, obtener el lugar porque ya lo tendríamos arriba em su contexto
         Lugar lugar = listaLugares.get(position);
@@ -121,8 +123,9 @@ public class LugaresListAdapter extends RecyclerView.Adapter<LugaresListAdapter.
         notifyItemRangeChanged(position, listaLugares.size());
     }
 
-    //Esta clase Holder representa a los elementos que vamos a manejar en cada item
-    //Sus atributos coinciden con la clase que simboliza cada item
+    /**
+     * Holder que casa los elementos interactivos
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView ivItemLugarImagen;
