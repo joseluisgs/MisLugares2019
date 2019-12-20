@@ -164,19 +164,19 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     // Enlazamos los elementos de la interfaz
     private void iniciarComponentesIU() {
         // Tipo
-        this.spinnerLugarDetalleTipo = (Spinner) getView().findViewById(R.id.spinnerLugarDetalleTipo);
-        this.etTipo = (TextInputLayout) getView().findViewById(R.id.tvDetalleLugarTipo);
+        this.spinnerLugarDetalleTipo = getView().findViewById(R.id.spinnerLugarDetalleTipo);
+        this.etTipo = getView().findViewById(R.id.tvDetalleLugarTipo);
         // Fecha
-        this.tvFecha = (EditText) getView().findViewById(R.id.etDetalleLugarFecha);
-        this.btnFecha = (Button) getView().findViewById(R.id.btnFecha);
+        this.tvFecha = getView().findViewById(R.id.etDetalleLugarFecha);
+        this.btnFecha = getView().findViewById(R.id.btnFecha);
 
         // Botones
-        this.fabAccion = (FloatingActionButton) getView().findViewById(R.id.fabDetalleLugarAccion);
-        this.btnCamara = (FloatingActionButton) getView().findViewById(R.id.ibDetalleLugarCamara);
+        this.fabAccion = getView().findViewById(R.id.fabDetalleLugarAccion);
+        this.btnCamara = getView().findViewById(R.id.ibDetalleLugarCamara);
         //
-        this.etNombre = (TextInputLayout) getView().findViewById(R.id.tvDetalleLugarNombre);
+        this.etNombre = getView().findViewById(R.id.tvDetalleLugarNombre);
         //this.etCoordenadas = (TextInputLayout) getView().findViewById(R.id.tvDetalleLugarCoordenadas);
-        this.ivLugar = (ImageView) getView().findViewById(R.id.ivDetalleLugar);
+        this.ivLugar = getView().findViewById(R.id.ivDetalleLugar);
 
         // Procesamos la fecha
         calendar = Calendar.getInstance();
@@ -486,7 +486,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
     // Para volver una vez insertado
     // O bloqueamos la interfaz para no icializarlo
     public void volver(){
-        ((MainActivity)getActivity()).onBackPressed();
+        getActivity().onBackPressed();
     }
 
     public boolean camposNoNulos(){
@@ -536,7 +536,7 @@ public class LugarDetalleFragment extends Fragment implements OnMapReadyCallback
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 
         // Esto para alta calidad
-        photoURI = Uri.fromFile(Utilidades.salvarFoto(this.IMAGE_DIRECTORY));
+        photoURI = Uri.fromFile(Utilidades.salvarFoto(IMAGE_DIRECTORY));
         intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, photoURI);
 
         // Esto para alta y baja

@@ -3,22 +3,22 @@ package com.example.mislugares.UI.acerca_de;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import com.example.mislugares.MainActivity;
 import com.example.mislugares.R;
 import com.example.mislugares.Utilidades.CirculoTransformacion;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
+/**
+ * Clase Acerca De
+ */
 public class AcercaDeFragment extends Fragment {
     private ImageView ivAcercaDeFoto;
     private FloatingActionButton fabEmail;
@@ -51,24 +51,27 @@ public class AcercaDeFragment extends Fragment {
         actualizarInterfaz();
 
 
-
     }
 
-    // Inicia los componentes IU
+    /**
+     * Inicia los componentes de la interfaz
+     */
     private void iniciarComponentesIU() {
         // Botones
-        fabEmail = (FloatingActionButton) getView().findViewById(R.id.fabEmailAcercaDe);
-        fabTwitter = (FloatingActionButton) getView().findViewById(R.id.fabTwitterAcercaDe);
+        fabEmail = getView().findViewById(R.id.fabEmailAcercaDe);
+        fabTwitter = getView().findViewById(R.id.fabTwitterAcercaDe);
         //Imagenes
-        ivAcercaDeFoto = (ImageView) getView().findViewById(R.id.ivAcercaDeFoto);
+        ivAcercaDeFoto = getView().findViewById(R.id.ivAcercaDeFoto);
     }
 
-    // iniciamos los eventos de la IU
-    private void iniciarEventosIU(){
+    /**
+     * Iniciamos los Eventos de la IU
+     */
+    private void iniciarEventosIU() {
         // Enviamos el email
         fabEmail.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((MainActivity) getActivity()).enviarCorreoElectronico("jlgs@cifpvirgendegracia.com","","Mis Lugares", "Este es un email de prueba para 2º DAM");
+                ((MainActivity) getActivity()).enviarCorreoElectronico("jlgs@cifpvirgendegracia.com", "", "Mis Lugares", "Este es un email de prueba para 2º DAM");
             }
         });
 
@@ -81,8 +84,10 @@ public class AcercaDeFragment extends Fragment {
         });
     }
 
-    // Actualizamos la interfaz y los menús que heredamos según nos convenga
-    private void actualizarInterfaz(){
+    /**
+     * Actualizamos la Interfaz
+     */
+    private void actualizarInterfaz() {
         // Oculto lo que no me interesa
         ((MainActivity) getActivity()).ocultarElementosIU();
 

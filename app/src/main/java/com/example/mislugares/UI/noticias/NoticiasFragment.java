@@ -2,17 +2,14 @@ package com.example.mislugares.UI.noticias;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -20,11 +17,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.example.mislugares.Controladores.ControladorRSS;
 import com.example.mislugares.MainActivity;
 import com.example.mislugares.Modelos.Noticia;
@@ -33,6 +25,9 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
+/**
+ * Fragmen para el manejo de ls noticias
+ */
 public class NoticiasFragment extends Fragment {
 
     private RecyclerView rv; // Recycler donde pondremos las cosas
@@ -71,7 +66,7 @@ public class NoticiasFragment extends Fragment {
         //Log.d("Noticias","Carga de Datos OK");
 
         // Mostramos las vistas de listas y adaptador asociado
-        rv= (RecyclerView) getView().findViewById(R.id.recycler);
+        rv = getView().findViewById(R.id.recycler);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         //Log.d("Noticias","asignado al RV");
 
@@ -84,6 +79,9 @@ public class NoticiasFragment extends Fragment {
         //Log.d("Noticias","Actualizar Interfaz OK");
     }
 
+    /**
+     * Actualiza la interfaz de IU
+     */
     private void actualizarInterfaz() {
         // Oculto lo que no me interesa
         ((MainActivity) getActivity()).ocultarElementosIU();
@@ -94,15 +92,20 @@ public class NoticiasFragment extends Fragment {
 
     }
 
+    /**
+     * Inicia los componentes de la IU
+     */
     private void iniciarComponentesIU() {
-        return ;
+        return;
     }
 
 
-    // Evento del gesto Swipe hacia abajo y llama a segundo plano
-    private void  iniciarSwipeRecarga() {
+    /**
+     * Evento de Swipe de Recarga
+     */
+    private void iniciarSwipeRecarga() {
 
-        swipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout = getView().findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -116,37 +119,39 @@ public class NoticiasFragment extends Fragment {
         });
     }
 
-    // Swipe horizontal
+    /**
+     * Swipe Horizontal
+     */
     private void iniciarSwipeHorizontal() {
         // Eventos pata procesar los eventos de swipe, en nuestro caso izquierda y derecha
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback =
                 new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT |
                         ItemTouchHelper.RIGHT) {
 
-            // Sobreescribimos los métodos
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
+                    // Sobreescribimos los métodos
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                        return false;
+                    }
 
-            // Analizamos el evento según la dirección
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                    // Analizamos el evento según la dirección
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                        int position = viewHolder.getAdapterPosition();
 
-                // Si pulsamos a la de izquierda a la derecha
-                // Borramos
-                if (direction == ItemTouchHelper.LEFT) {
-                   // Log.d("Noticias", "Tocado izquierda");
-                    borrarElemento(position);
+                        // Si pulsamos a la de izquierda a la derecha
+                        // Borramos
+                        if (direction == ItemTouchHelper.LEFT) {
+                            // Log.d("Noticias", "Tocado izquierda");
+                            borrarElemento(position);
 
-                    // Si no editamos
-                } else {
-                  //  Log.d("Noticias", "Tocado derecha");
-                   verElemento(position);
+                            // Si no editamos
+                        } else {
+                            //  Log.d("Noticias", "Tocado derecha");
+                            verElemento(position);
 
-                }
-            }
+                        }
+                    }
 
                     // Dibujamos los botones y eveneto. Nos lo creemos :):)
                     // IMPORTANTE
@@ -155,34 +160,41 @@ public class NoticiasFragment extends Fragment {
                     // https://material.io/resources/icons/?style=baseline
                     // como PNG y cargas el de mayor calidad
                     // de otra forma Bitmap no funciona bien
-            @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
-                                    float dX, float dY, int actionState, boolean isCurrentlyActive) {
-                Bitmap icon;
-                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-                    View itemView = viewHolder.itemView;
-                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
-                    float width = height / 3;
-                    // Si es dirección a la derecha: izquierda->derecta
-                    // Pintamos de azul y ponemos el icono
-                    if (dX > 0) {
-                        // Pintamos el botón izquierdo
-                        botonIzquierdo(c, dX, itemView, width);
+                    @Override
+                    public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                            float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                        Bitmap icon;
+                        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                            View itemView = viewHolder.itemView;
+                            float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                            float width = height / 3;
+                            // Si es dirección a la derecha: izquierda->derecta
+                            // Pintamos de azul y ponemos el icono
+                            if (dX > 0) {
+                                // Pintamos el botón izquierdo
+                                botonIzquierdo(c, dX, itemView, width);
 
-                    } else {
-                        // Caso contrario
-                        botonDerecho(c, dX, itemView, width);
+                            } else {
+                                // Caso contrario
+                                botonDerecho(c, dX, itemView, width);
+                            }
+                        }
+                        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
                     }
-                }
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-            }
-        };
+                };
         // Añadimos los eventos al RV
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(rv);
     }
 
-    // Es que vamos de derecha a izquierda
+    /**
+     * Al pulsar el botón derecho del swipe
+     *
+     * @param c
+     * @param dX
+     * @param itemView
+     * @param width
+     */
     private void botonDerecho(Canvas c, float dX, View itemView, float width) {
         // Pintamos de rojo y ponemos el icono
         Bitmap icon;
@@ -194,7 +206,14 @@ public class NoticiasFragment extends Fragment {
         c.drawBitmap(icon, null, icon_dest, p);
     }
 
-    // Pintamos un botón izquierdo en la posicón del color que se indica
+    /**
+     * AL pulsar el botón izquiero del swipe
+     *
+     * @param c
+     * @param dX
+     * @param itemView
+     * @param width
+     */
     private void botonIzquierdo(Canvas c, float dX, View itemView, float width) {
         // Pintamos de azul y ponemos el icono
         Bitmap icon;
@@ -206,6 +225,11 @@ public class NoticiasFragment extends Fragment {
         c.drawBitmap(icon, null, icon_dest, p);
     }
 
+    /**
+     * Ver el elemnto aosicado en una posición
+     *
+     * @param position
+     */
     private void verElemento(int position) {
         /**
          * Transacción entre fragments. Lo primero es llamar al fragment manager
@@ -233,7 +257,11 @@ public class NoticiasFragment extends Fragment {
         ad.restoreItem(noticia, position);
     }
 
-    // Borra un elemento de la lista
+    /**
+     * Borra un elemento de una posoción
+     *
+     * @param position
+     */
     private void borrarElemento(int position) {
         final Noticia deletedModel = noticias.get(position);
         final int deletedPosition = position;
@@ -252,7 +280,11 @@ public class NoticiasFragment extends Fragment {
         snackbar.show();
     }
 
-    // Comprbamos que tenemos conexión a internet
+    /**
+     * Comprueba si tenemos conexión
+     *
+     * @return
+     */
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) root.getContext().getSystemService
@@ -262,8 +294,9 @@ public class NoticiasFragment extends Fragment {
     }
 
 
-    /**********   Tareas en segundo plano ****/
-    // Tarea asíncrona que se encarga de cargar las cosas en segundo plano
+    /**
+     * Tarea asíncrona para la carga de noticias
+     */
     class TareaCargarNoticias extends AsyncTask<String, Void, Void> {
 
         // Primero comprobamos si hay internet, si no lo hay, pintamos en el thread de la
@@ -271,7 +304,9 @@ public class NoticiasFragment extends Fragment {
         // al refreshlayout que deje de refrescar.  Tambíen pararemos la ejecución de la
         // tarea asíncrona (no se ejecutará el doInBackground)
 
-        // Comprobamos que es necesario antes de ejecutarse
+        /**
+         * Acciones ante sde ejecutarse
+         */
         @Override
         protected void onPreExecute() {
             if (!isNetworkAvailable()) {
@@ -292,7 +327,12 @@ public class NoticiasFragment extends Fragment {
             //Log.d("Prueba", "onPreExecute OK");
         }
 
-        // Método que se encarga del procesamiento en segundo plano
+        /**
+         * Procedimiento asíncrono
+         *
+         * @param url
+         * @return
+         */
         @Override
         protected Void doInBackground(String... url) {
             //Log.d("Noticias", "Entrado en doInBackgroud con: " + url[0]);
@@ -304,13 +344,17 @@ public class NoticiasFragment extends Fragment {
             } catch (Exception e) {
                 //Log.e("T2Plano ", e.getMessage());
             }
-           // Log.d("Noticias", "onDoInBackgroud OK");
+            // Log.d("Noticias", "onDoInBackgroud OK");
             return null;
         }
 
 
-       // Lo que hacemos una vez terminada la acción en segundo pano
-        // Cargamos la lista y le asignamos su adaptador
+        /**
+         * Procedimiento a realizar al terminar
+         * Cargamos la lista
+         *
+         * @param args
+         */
         @Override
         protected void onPostExecute(Void args) {
             //Log.d("Noticias", "entrando en onPostExecute");

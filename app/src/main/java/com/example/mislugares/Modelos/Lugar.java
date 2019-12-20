@@ -18,13 +18,14 @@ public class Lugar {
 
     /**
      * Constructor de la clase Lugar
-     * @param id Identificador, ID
-     * @param nombre Nombre de Lugar
-     * @param tipo Tipo de Lugar
-     * @param fecha Fecha de Lugar
-     * @param latitud Latitud del Lugar
+     *
+     * @param id       Identificador, ID
+     * @param nombre   Nombre de Lugar
+     * @param tipo     Tipo de Lugar
+     * @param fecha    Fecha de Lugar
+     * @param latitud  Latitud del Lugar
      * @param longitud Longitud de Lugar
-     * @param imagen Imagen de Lugar
+     * @param imagen   Imagen de Lugar
      */
     public Lugar(long id, String nombre, String tipo, String fecha, float latitud, float longitud, String imagen) {
         this.id = id;

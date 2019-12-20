@@ -134,11 +134,11 @@ public class LugaresListAdapter extends RecyclerView.Adapter<LugaresListAdapter.
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.ivItemLugarImagen = (ImageView) itemView.findViewById(R.id.ivItemLugarImagen);
-            this.tvItemLugarNombre = (TextView) itemView.findViewById(R.id.tvItemLugarNombre);
-            this.tvItemLugarFecha = (TextView) itemView.findViewById(R.id.tvItemLugarFecha);
-            this.tvItemLugarTipo = (TextView) itemView.findViewById(R.id.tvItemLugarTipo);
-            relativeLugar = (CardView) itemView.findViewById(R.id.relativeItemLugar);
+            this.ivItemLugarImagen = itemView.findViewById(R.id.ivItemLugarImagen);
+            this.tvItemLugarNombre = itemView.findViewById(R.id.tvItemLugarNombre);
+            this.tvItemLugarFecha = itemView.findViewById(R.id.tvItemLugarFecha);
+            this.tvItemLugarTipo = itemView.findViewById(R.id.tvItemLugarTipo);
+            relativeLugar = itemView.findViewById(R.id.relativeItemLugar);
         }
     }
 

@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Oculta los elementos en la IU
      */
-    private void ocultarElementosIU() {
+    public void ocultarElementosIU() {
         ocultarBotonesFlotantes();
         ocultarOcionesMenu();
     }

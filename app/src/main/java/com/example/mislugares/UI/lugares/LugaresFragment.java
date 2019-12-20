@@ -80,7 +80,7 @@ public class LugaresFragment extends Fragment {
         gestionSpinner();
 
         // Mostramos las vistas de listas y adaptador asociado
-        rv = (RecyclerView) getView().findViewById(R.id.recyclerLugares);
+        rv = getView().findViewById(R.id.recyclerLugares);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
@@ -102,8 +102,8 @@ public class LugaresFragment extends Fragment {
 
     // Iniciamos los componentes
     private void iniciarComponentesIU(){
-        fabNuevo =(FloatingActionButton)getView().findViewById(R.id.fabLugaresNuevo);
-        fabVoz = (FloatingActionButton)getView().findViewById(R.id.fabLugaresVoz);
+        fabNuevo = getView().findViewById(R.id.fabLugaresNuevo);
+        fabVoz = getView().findViewById(R.id.fabLugaresVoz);
     }
 
     // iniciamos los eventos de la IU
@@ -126,7 +126,7 @@ public class LugaresFragment extends Fragment {
 
     // Evento del gesto Swipe hacia abajo
     private void iniciarSwipeRecarga() {
-        swipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.swipeRefreshLayoutLugares);
+        swipeRefreshLayout = getView().findViewById(R.id.swipeRefreshLayoutLugares);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -248,7 +248,7 @@ public class LugaresFragment extends Fragment {
      //de strings que componen el adaptador del filtro, mandamos al método de consultar
      //un filtro u otro (que concatenamos a lla consulta del listado
      private void gestionSpinner() {
-        this.spinnerFiltro = (Spinner) getView().findViewById(R.id.spinnerLugaresFiltro);
+        this.spinnerFiltro = getView().findViewById(R.id.spinnerLugaresFiltro);
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, listaFiltro);
         spinnerFiltro.setAdapter(dataAdapter);
         this.spinnerFiltro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -375,7 +375,7 @@ public class LugaresFragment extends Fragment {
         Lugar lugar = lugares.get(position);
         FragmentManager fm = getFragmentManager();
         // Lo abrimos en modo actualizar
-        LugarDetalleFragment detalle = new LugarDetalleFragment(lugar, ACTUALIZAR);;
+        LugarDetalleFragment detalle = new LugarDetalleFragment(lugar, ACTUALIZAR);
         // inicamos la transición
         FragmentTransaction transaction;
         transaction = fm.beginTransaction();

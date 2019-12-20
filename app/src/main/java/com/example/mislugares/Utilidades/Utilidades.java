@@ -1,30 +1,37 @@
 package com.example.mislugares.Utilidades;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Environment;
 import android.util.Base64;
-import android.util.Log;
-import android.view.View;
-
-import com.google.android.material.snackbar.Snackbar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 
+/**
+ * Clase Utiidades
+ */
 public class Utilidades {
 
-    // Pasamos de base64 a bitmap
+    /**
+     * Convierte una cadena Base64 a Bitmap
+     *
+     * @param b64String cadena Base 64
+     * @return Bitmap
+     */
     public static Bitmap base64ToBitmap(String b64String) {
         byte[] imageAsBytes = Base64.decode(b64String.getBytes(), Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
     }
 
-    // Bitmp a base 64
+    /**
+     * Convierte un Bitmap a una cadena Base64
+     *
+     * @param bitmap Bitmap
+     * @return Cadena Base74
+     */
     public static String bitmapToBase64(Bitmap bitmap) {
         // Comrimimos al 60 % la imagen
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -34,18 +41,34 @@ public class Utilidades {
 
     }
 
-    // Salva una foto en el directorio público
+    /**
+     * Salva una imagen en un directorio publico
+     *
+     * @param path Path
+     * @return Apuntador File al lugar
+     */
     public static File salvarFoto(String path) {
         // Nombre del fichero
         String fichero = crearNombreFichero();
         return salvarFicheroPublico(path, fichero);
     }
 
-    // Crea el nombre de la foto con el mombre el mili segudnos
+    /**
+     * Función para opbtener el nombre del fichero
+     *
+     * @return Nombre del fichero
+     */
     private static String crearNombreFichero() {
-        return "lugares"+Calendar.getInstance().getTimeInMillis() + ".jpg";
+        return "lugares" + Calendar.getInstance().getTimeInMillis() + ".jpg";
     }
 
+    /**
+     * Salva un fichero en un directorio
+     *
+     * @param path   Path de almacenamiento
+     * @param nombre nombre del fichero
+     * @return Apuntador File del fichero
+     */
     private static File salvarFicheroPublico(String path, String nombre) {
         // Vamos a obtener los datos de almacenamiento externo
         File dirFotos = new File(Environment.getExternalStorageDirectory() + path);
@@ -62,9 +85,6 @@ public class Utilidades {
         }
         return null;
     }
-
-
-
 
 
 }
